@@ -1,0 +1,180 @@
+@import url("../font/font.css");
+@import "color-light.css" screen;
+@import "color-dark.css" screen;
+/* @import "color-dark.css" screen and (prefers-color-scheme: dark); */
+@import "hljs.css";
+
+/* this is the main stylesheet.
+ * we should strive to not put colors inside.
+ * (see color-*.css for day/night and hljs.css for code highlighting)
+ */
+
+#theme-toggle {
+  height: 32px;
+  width: 32px;
+  display: inline-block;
+}
+
+html[data-theme="dark"] #header img {
+  filter: invert(1);
+}
+
+html[data-theme="dark"] #theme-toggle-moon,
+html[data-theme="light"] #theme-toggle-sun {
+  display: none;
+}
+
+html {
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+html,
+body {
+  transition: 0.25s all ease;
+  line-height: 1.5em;
+  /*removed for gnosmos.css*/
+  /* padding: 0; */
+  /* margin: 0; */
+  /* font-family: "Roboto Mono", "Courier New", "sans-serif"; */
+  /* font-size: 15px; */
+}
+
+/*removed for gnosmos.css*/
+/* body { */
+/*   height: 100%; */
+/*   width: 100%; */
+/* } */
+
+/* input { */
+/*   -webkit-appearance: none; */
+/*   -moz-appearance: none; */
+/*   appearance: none; */
+/* } */
+
+/* input { */
+/*   font-family: "Roboto Mono", "Monaco", monospace; */
+/*   border-width: 1px; */
+/*   border-style: solid; */
+/*   width: 25em; */
+/* } */
+
+blockquote blockquote {
+  margin: 0;
+}
+
+pre {
+  margin: 0;
+}
+
+/*** PAGE LAYOUT ***/
+
+/* #root { */
+/*   display: flex; */
+/*   flex-direction: column; */
+/*   border-width: 1px; */
+/*   border-style: solid; */
+/*   margin: 20px; */
+/*   /1* height: calc(100vh - 40px); *1/ */
+/* } */
+#root {
+  padding: .5em;
+  margin: 10px 10px;
+}
+
+/* #header { */
+/*   padding: 22px; */
+/*   display: flex; */
+/*   align-items: center; */
+/*   justify-content: space-between; */
+/* } */
+#header {
+  border-top-left-radius: 0.5em;
+  border-top-right-radius: 0.5em;
+  padding: 1em 1em 0 1em;
+  margin-bottom: 0;
+  box-shadow: rgb(76, 84, 92) 3px 3px 1px -2px;
+  height: 38px;
+}
+
+/* #header { */
+/*   padding: 22px; */
+/*   display: flex; */
+/*   align-items: center; */
+/*   justify-content: space-between; */
+/* } */
+
+div#header + div {
+  margin-top: 0px;
+  padding-top: 0.5em;
+  border-bottom-left-radius: 0.5em;
+  border-bottom-right-radius: 0.5em;
+}
+
+div#home,
+div#packge_dir,
+div#package_file,
+div#realm_help,
+div#realm_render { 
+  padding: 0 15px 15px 15px;
+}
+
+a { text-decoration: none; }
+
+#header_buttons {
+  float: right;
+  position: relative;
+  padding-left: 22px;
+  margin-left: auto;
+}
+
+#realm_links { 
+  position: absolute;
+  top: 3.3em; 
+  padding-left: 1em;
+}
+
+#logo, .logonav {
+  position: relative;
+  font-size: 1.5em;
+}
+
+/* #logo_path a:hover { text-decoration: underline; } */
+
+#logo_path { 
+  position: absolute;
+  padding-left: 1em;
+}
+
+/* enabled conditionally with <noscript> */
+#source {
+  display: none;
+}
+
+/*** REALM HELP ***/
+
+#realm_help .func_spec > table > tbody > tr > th {
+  width: 50px;
+  vertical-align: top;
+  text-align: right;
+}
+
+#realm_help .func_spec > table th,
+#realm_help .func_spec > table td {
+  padding-bottom: 16px;
+}
+
+#realm_help .func_spec > table th + td {
+  padding-left: 50px;
+}
+
+#realm_help .func_spec > table th + td table td {
+  padding-left: 12px;
+}
+
+#realm_help .func_name td {
+  font-weight: bold;
+}
+
+h1 { font-size: 1.618em; }
