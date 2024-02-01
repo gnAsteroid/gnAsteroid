@@ -23,19 +23,20 @@ echo "I'm Bob from Neptune. In a previous life I was a sumo." > bob/about.md
 ```
 
 That's it, an asteroid with 2 pages.
-To launch it's as before.
-
+Launch essentially like before:
 ```bash
 /path/to/website \
     -bind 127.0.0.1:8888 \
     -asteroid-name "Bob's asteroid" \
     -asteroid-dir ~/asteroids/bob
 ```
-To test, he can visit http://127.0.0.1:8888
+Test by visiting [http://127.0.0.1:8888](http://127.0.0.1:8888).
 
-# Style
+# Styling an asteroid?
 
-In the context of asteroids, we call style a set 
+Asteroids are very rough rocks.
+
+In the context of asteroids, we call **style** a set 
 of 3 folders: `css`, `font` and `img`. You may fork and
 modify the style at [grepsuzette/gnAsteroid.style-gnosmos](https://github.com/grepsuzette/gnAsteroid.style-gnosmos).
 
@@ -43,6 +44,13 @@ Then `./website -style-dir=/path/to/your/style -asteroid-dir=example`
 
 When no style is specified, a style similar to gnosmos, embedded 
 within the binary, is used.
+
+# TODO
+
+- The doc could be an asteroid.
+- views/ may also need to be part of styles... hum? better not
+- a realm to register asteroid belts?
+- querying asteroid belts to show links?
 
 # More 
 

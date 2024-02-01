@@ -69,12 +69,8 @@ func makeApp() gotuna.App {
 	if osm.DirExists(flags.styleDir) {
 		app.Router.Handle("/static/{path:(?:css|font|img)/.+}", handlerAsset(app))
 	}
+	// else the style is simply in embed.FS as well:
 	app.Router.Handle("/static/{path:.+}", handlerStaticFile(app))
-	// } else {
-	// 	// no style provided -> use embed.FS style
-	// 	app.Router.Handle("/static/{path:.+}", handlerStaticFile(app))
-	// 	// app.Router.Handle("/assets/{path:(?:css|font|img)/.+}", handlerAsset(app))
-	// }
 	app.Router.Handle("/favicon.ico", handlerFavicon(app))
 	app.Router.Handle("/status.json", handlerStatusJSON(app))
 	app.Router.Handle("/{anything:.*(?:\\.md)?}", handlerAnything(app))
