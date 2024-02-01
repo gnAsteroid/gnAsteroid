@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -30,10 +31,10 @@ const (
 )
 
 var flags struct {
-	bindAddr     string
-	asteroidName string
-	remoteAddr   string
 	asteroidDir  string
+	asteroidName string
+	bindAddr     string
+	remoteAddr   string
 	styleDir     string
 	helpChainID  string
 	helpRemote   string
@@ -42,13 +43,13 @@ var flags struct {
 var startedAt time.Time
 
 func init() {
-	flag.StringVar(&flags.remoteAddr, "remote", "127.0.0.1:26657", "remote gnoland node address")
+	flag.StringVar(&flags.asteroidDir, "asteroid-dir", "", "wiki directory location. [Mandatory!]")
+	flag.StringVar(&flags.asteroidName, "asteroid-name", "CHANGEME", "the asteroid name (website title). Default=CHANGEME")
 	flag.StringVar(&flags.bindAddr, "bind", "0.0.0.0:8888", "server listening address")
-	flag.StringVar(&flags.asteroidDir, "asteroid-dir", "/app/asteroids/empty", "wiki directory location")
-	flag.StringVar(&flags.styleDir, "style-dir", "/app/styles/gnosmos", "style directory (css, js, img)")
+	flag.StringVar(&flags.styleDir, "style-dir", "", "style directory (css, js, img). Default=<internal>")
+	flag.StringVar(&flags.remoteAddr, "remote", "127.0.0.1:26657", "remote gnoland node address")
 	flag.StringVar(&flags.helpChainID, "help-chainid", "dev", "help page's chainid")
 	flag.StringVar(&flags.helpRemote, "help-remote", "127.0.0.1:26657", "help page's remote addr")
-	flag.StringVar(&flags.asteroidName, "asteroid-name", "CHANGEME", "the asteroid name (website title)")
 	startedAt = time.Now()
 }
 
@@ -65,8 +66,15 @@ func makeApp() gotuna.App {
 	app.Router.Handle("/r/{rlmname:[a-z][a-z0-9_]*(?:/[a-z][a-z0-9_]*)+}", handlerRealmMain(app))
 	app.Router.Handle("/r/{rlmname:[a-z][a-z0-9_]*(?:/[a-z][a-z0-9_]*)+}:{querystr:.*}", handlerRealmRender(app))
 	app.Router.Handle("/p/{filepath:.*}", handlerPackageFile(app))
+	if osm.DirExists(flags.styleDir) {
+		app.Router.Handle("/static/{path:(?:css|font|img)/.+}", handlerAsset(app))
+	}
 	app.Router.Handle("/static/{path:.+}", handlerStaticFile(app))
-	app.Router.Handle("/assets/{path:(?:css|font|img)/.+}", handlerAsset(app))
+	// } else {
+	// 	// no style provided -> use embed.FS style
+	// 	app.Router.Handle("/static/{path:.+}", handlerStaticFile(app))
+	// 	// app.Router.Handle("/assets/{path:(?:css|font|img)/.+}", handlerAsset(app))
+	// }
 	app.Router.Handle("/favicon.ico", handlerFavicon(app))
 	app.Router.Handle("/status.json", handlerStatusJSON(app))
 	app.Router.Handle("/{anything:.*(?:\\.md)?}", handlerAnything(app))
@@ -108,11 +116,13 @@ func handlerAnything(app gotuna.App) http.Handler {
 		} else if osm.FileExists(file + ".md") {
 			file = file + ".md"
 		} else if osm.FileExists(file) { // exists and file or dir
+		} else if osm.DirExists(file) { // exists and file or dir
+			http.Error(w, "Teapot: missing index.md", http.StatusTeapot)
+			return
 		} else {
-			w.Write([]byte("Sorry, I don't serve directory for now. Add an index.md so that I automatically can show it"))
+			http.Error(w, "Not Found", http.StatusNotFound)
 			return
 		}
-		// 403 if contains ".." as a protection
 		if strings.Contains(file, "..") {
 			app.NewTemplatingEngine().
 				Set("AsteroidName", flags.asteroidName).
@@ -129,8 +139,11 @@ func handlerAnything(app gotuna.App) http.Handler {
 		case strings.HasSuffix(file, ".jpg") || strings.HasSuffix(file, ".jpeg"):
 			http.ServeFile(w, r, file)
 		default:
-			w.Write([]byte("Sorry, unrecognized extension"))
-			return
+			if osm.FileExists(file) {
+				w.Write([]byte("Unrecognized extension"))
+			} else {
+				http.Error(w, "Not Found", http.StatusNotFound)
+			}
 		}
 	})
 }
@@ -390,18 +403,7 @@ func handlerAsset(app gotuna.App) http.Handler {
 		s := flags.styleDir
 		file := filepath.Join(s, mux.Vars(r)["path"])
 		if !osm.FileExists(file) || osm.DirExists(file) {
-			// 404
-			app.NewTemplatingEngine().
-				Set("AsteroidName", flags.asteroidName).
-				Render(w, r, "views/404.html", "views/funcs.html")
-			// w.Write([]byte("Sorry, "+ file +" does not exist or it's a directory"))
-			return
-		} else if strings.HasPrefix("/", file) || strings.Contains(file, "..") {
-			// 403 if absolute or contains ".." as a protection
-			app.NewTemplatingEngine().
-				Set("AsteroidName", flags.asteroidName).
-				Render(w, r, "views/403.html", "views/funcs.html")
-			return
+			http.Error(w, "Not Found", http.StatusNotFound)
 		} else {
 			// serve the file, based of its extension
 			http.ServeFile(w, r, file)
@@ -435,9 +437,24 @@ func handlerStaticFile(app gotuna.App) http.Handler {
 }
 
 func handlerFavicon(app gotuna.App) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, flags.styleDir+"/img/favicon.ico")
-	})
+	if osm.DirExists(flags.styleDir) && osm.FileExists(flags.styleDir+"/img/favicon.ico") {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			http.ServeFile(w, r, flags.styleDir+"/img/favicon.ico")
+		})
+	} else {
+		fs := http.FS(app.Static)
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			fpath := "img/favicon.ico"
+			f, err := fs.Open(fpath)
+			if os.IsNotExist(err) {
+				handleNotFound(app, fpath, w, r)
+				return
+			}
+			w.Header().Set("Content-Type", "image/x-icon")
+			w.Header().Set("Cache-Control", "public, max-age=604800") // 7d
+			io.Copy(w, f)
+		})
+	}
 }
 
 func handleNotFound(app gotuna.App, path string, w http.ResponseWriter, r *http.Request) {

@@ -1,7 +1,7 @@
 {{ define "header_buttons" }}
 <div id="header_buttons">
   <a href="https://github.com/gnolang/gno"
-    ><img src="/assets/img/github-mark-32px.png" alt="Github"
+    ><img src="/static/img/github-mark-32px.png" alt="Github"
   /></a>
   <a href="#" title="Toggle dark mode" id="theme-toggle">
     <!--
@@ -49,9 +49,9 @@
 {{ end }}
 {{ define "html_head" }}
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="stylesheet" href="/assets/css/normalize.css" />
-<link rel="stylesheet" href="/assets/css/gnosmos.css" />
-<link rel="stylesheet" href="/assets/css/hljs.css" />
+<link rel="stylesheet" href="/static/css/normalize.css" />
+<link rel="stylesheet" href="/static/css/gnosmos.css" />
+<link rel="stylesheet" href="/static/css/hljs.css" />
 <noscript>
   <style type="text/css">
     #source {
@@ -102,7 +102,7 @@
 {{ define "header_logo" }}
 <!--<a id="logo" href="/">
   <img
-    src="/assets/img/logo.png"
+    src="/static/img/logo.png"
     alt="{{ .Data.AsteroidName }}"
     title="{{ .Data.AsteroidName }}"
     height="38"
