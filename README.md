@@ -1,9 +1,10 @@
-gnAsteroid is a fork of the [gno.land](https://gno.land) website.
+This helps creating **GNO asteroids**.
 
-You can use it to setup personal blogs, organisation websites or just to experiment, as it allows links to interact with the Realms on the GNO blockchain.
+Asteroids are simple websites or personal wikis that can interact with the Realms on the [GNO blockchain](https://github.com/gnolang/gno). 
 
-That's right, in fact that's its main purpose. To help creating GNO **asteroids**.
-Asteroids are simple websites (or personal wiki) that can interact with the Realms on the GNO blockchain, in the fashion of the content of the [gno.land](https://gno.land) platform but with content (and optionally styling) you control.
+You can use it to setup personal blogs, organisation websites, research areas, presenting newly discovered gems in the gnoland or just to experiment. Like gno.land, it's kind of a smart-contract heightened wiki platform, but with redactional and stylistic autonomy.
+
+gnAsteroid is a fork of the [gno.land](https://gno.land) website. However it doesn't intend to compete with it. Instead it's made to gravitate around it. 
 
 # How to create a GNO asteroid
 
@@ -59,6 +60,6 @@ while true; do
     fi
 done
 ```
-It's awesome, isn't it?
 
+# Demo
 

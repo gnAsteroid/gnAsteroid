@@ -14,7 +14,6 @@ html[data-theme="dark"] input { background-color: #393939; border-color: #ccc; }
 html[data-theme="dark"] blockquote { background-color: #404040; }
 html[data-theme="dark"] blockquote blockquote { background-color: #555555; }
 
-html[data-theme="dark"] pre { background-color: #252545; }
 html[data-theme="dark"] div#header + div {
   background-color: rgb(50, 48, 48);
   box-shadow: rgb(76, 84, 92) 3px 3px 1px -2px
@@ -28,4 +27,18 @@ html[data-theme="dark"] #realm_help .func_spec:nth-child(odd) { background: #454
 html[data-theme="dark"] #realm_help .func_spec .shell_command { color: #b6b6b6; }
 html[data-theme="dark"] #realm_help .func_spec > table > tbody > tr > th { color: #eee; }
 
-
+html[data-theme="dark"] pre { background-color: #252545; }
+html[data-theme="dark"] code {
+  background-color: #252545;
+  color: #a87ab6;
+  /* font-size: 0.87em; */
+  font-size: 1.02em;
+  text-shadow: black 1px 1px;
+}
+html[data-theme="dark"] pre > code {
+  background-color: #252545;
+  color: #858ed7;
+  /* font-size: 0.87em; */
+  font-size: 1.02em;
+  text-shadow: black 1px 1px;
+}

@@ -32,6 +32,7 @@ const (
 
 var flags struct {
 	bindAddr    string
+	asteroidName string
 	remoteAddr  string
 	viewsDir    string
 	pagesDir    string
@@ -48,6 +49,7 @@ func init() {
 	flag.StringVar(&flags.pagesDir, "pages-dir", "./gnoland/website8889/wiki", "wiki directory location")
 	flag.StringVar(&flags.helpChainID, "help-chainid", "dev", "help page's chainid")
 	flag.StringVar(&flags.helpRemote, "help-remote", "127.0.0.1:26657", "help page's remote addr")
+	flag.StringVar(&flags.asteroidName, "asteroid-name", "CHANGEME", "the asteroid name (website title)")
 	startedAt = time.Now()
 }
 
@@ -92,6 +94,7 @@ func handlerHome(app gotuna.App) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		app.NewTemplatingEngine().
+			Set("AsteroidName", flags.asteroidName).
 			Set("HomeContent", string(homeContent)).
 			Render(w, r, "home.html", "funcs.html")
 	})
@@ -113,6 +116,7 @@ func handlerAnything(app gotuna.App) http.Handler {
 		// 403 if contains ".." as a protection
 		if strings.Contains(file, "..") {
 			app.NewTemplatingEngine().
+				Set("AsteroidName", flags.asteroidName).
 				Render(w, r, "403.html", "funcs.html")
 		}
 		// serve the file, based of its extension
@@ -120,6 +124,7 @@ func handlerAnything(app gotuna.App) http.Handler {
 		case strings.HasSuffix(file, ".md"):
 			content := osm.MustReadFile(file)
 			app.NewTemplatingEngine().
+				Set("AsteroidName", flags.asteroidName).
 				Set("MainContent", string(content)).
 				Render(w, r, "generic.html", "funcs.html")
 		case strings.HasSuffix(file, ".jpg") || strings.HasSuffix(file, ".jpeg"):
@@ -186,6 +191,7 @@ func handlerRedirect(app gotuna.App) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/r/boards:gnolang/3", http.StatusFound)
 		app.NewTemplatingEngine().
+			Set("AsteroidName", flags.asteroidName).
 			Render(w, r, "home.html", "funcs.html")
 	})
 }
@@ -219,6 +225,7 @@ func handlerRealmMain(app gotuna.App) http.Handler {
 			}
 			// Render template.
 			tmpl := app.NewTemplatingEngine()
+			tmpl.Set("AsteroidName", flags.asteroidName)
 			tmpl.Set("FuncName", funcName)
 			tmpl.Set("RealmPath", rlmpath)
 			// tmpl.Set("FormBodyType", query.Get("body.type")) // when "textarea", <textarea> will be used instead of <input>
@@ -288,7 +295,7 @@ func handleRealmRender(app gotuna.App, w http.ResponseWriter, r *http.Request) {
 	}
 	// Render template.
 	tmpl := app.NewTemplatingEngine()
-
+	tmpl.Set("AsteroidName", flags.asteroidName)
 	tmpl.Set("RealmName", rlmname)
 	tmpl.Set("RealmPath", rlmpath)
 	tmpl.Set("Query", querystr)
@@ -333,6 +340,7 @@ func renderPackageFile(app gotuna.App, w http.ResponseWriter, r *http.Request, d
 		files := strings.Split(string(res.Data), "\n")
 		// Render template.
 		tmpl := app.NewTemplatingEngine()
+		tmpl.Set("AsteroidName", flags.asteroidName)
 		tmpl.Set("DirURI", diruri)
 		tmpl.Set("DirPath", pathOf(diruri))
 		tmpl.Set("Files", files)
@@ -349,6 +357,7 @@ func renderPackageFile(app gotuna.App, w http.ResponseWriter, r *http.Request, d
 		}
 		// Render template.
 		tmpl := app.NewTemplatingEngine()
+		tmpl.Set("AsteroidName", flags.asteroidName)
 		tmpl.Set("DirURI", diruri)
 		tmpl.Set("DirPath", pathOf(diruri))
 		tmpl.Set("FileName", filename)
@@ -421,6 +430,7 @@ func handlerFavicon(app gotuna.App) http.Handler {
 func handleNotFound(app gotuna.App, path string, w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
 	app.NewTemplatingEngine().
+		Set("AsteroidName", flags.asteroidName).
 		Set("title", "Not found").
 		Set("path", path).
 		Render(w, r, "404.html", "funcs.html")

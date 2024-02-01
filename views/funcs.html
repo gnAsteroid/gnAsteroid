@@ -103,16 +103,16 @@
 <!--<a id="logo" href="/">
   <img
     src="/static/img/logo.png"
-    alt="Gno.land"
-    title="Gno.land"
+    alt="{{ .Data.AsteroidName }}"
+    title="{{ .Data.AsteroidName }}"
     height="38"
   />
 </a>-->
-<a class="logonav" href="/">Gnosmos</a>
+<a class="logonav" href="/">{{ .Data.AsteroidName }}</a>
 {{ end }}
 {{ define "header_logo_with_back" }}
 <a class="logonav" href="javascript:window.history.back()">&nbsp;&lt;&nbsp;</a>&nbsp;
-<a class="logonav" href="/">Gnosmos</a>
+<a class="logonav" href="/">{{- .Data.AsteroidName -}}</a>
 {{end}}
 {{ define "footer" }}
 {{ end }}

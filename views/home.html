@@ -2,14 +2,14 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Gno.land</title>
+    <title>{{ .Data.AsteroidName }}</title>
     {{ template "html_head" }}
   </head>
   <body onload="main()">
     <div id="root">
       <div id="header">
-        {{ template "header_logo" }}
-        {{ template "header_buttons" }}
+        {{ template "header_logo" . }}
+        {{ template "header_buttons" . }}
       </div>
 
       <div id="home">

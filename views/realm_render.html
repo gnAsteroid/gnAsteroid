@@ -2,8 +2,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Gno.land</title>
-    {{ template "html_head" }}
+    <title>{{ .Data.AsteroidName }}</title>
+    {{ template "html_head" . }}
   </head>
   <body onload="main()">
     <div id="root">
@@ -17,7 +17,7 @@
           <a href="/r/{{ .Data.RealmName }}/">[source]</a>
           <a href="/r/{{ .Data.RealmName }}?help">[help]</a>
         </span>
-        {{ template "header_buttons" }}
+        {{ template "header_buttons" . }}
       </div>
 
       <div id="realm_render">
