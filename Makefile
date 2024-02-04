@@ -1,6 +1,6 @@
 .PHONY: all
 all:
-	go build -o website .
+	go build -o gnAsteroid .
 
 run: all
-	./website -bind 127.0.0.1:8888 -asteroid-dir ./example
+	./gnAsteroid -bind 127.0.0.1:8888 -asteroid-dir ./example

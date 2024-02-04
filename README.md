@@ -6,8 +6,8 @@ gnAsteroid is a fork of the [gno.land](https://gno.land) website. However it doe
 
 # Minimal example
 
-* **Compile** using `go build -o website`,
-* **Run** with `./website -asteroid-dir=example`, 
+* **Compile** using `go build -o gnAsteroid`,
+* **Run** with `./gnAsteroid -asteroid-dir=example`, 
 * **Visit** with a browser.
 
 # To create a GNO asteroid
@@ -25,7 +25,7 @@ echo "I'm Bob from Neptune. In a previous life I was a sumo." > bob/about.md
 That's it, an asteroid with 2 pages.
 Launch essentially like before:
 ```bash
-/path/to/website \
+gnAsteroid \
     -bind 127.0.0.1:8888 \
     -asteroid-name "Bob's asteroid" \
     -asteroid-dir ~/asteroids/bob
@@ -40,7 +40,7 @@ In the context of asteroids, we call **style** a set
 of 3 folders: `css`, `font` and `img`. You may fork and
 modify the style at [grepsuzette/gnAsteroid.style-gnosmos](https://github.com/grepsuzette/gnAsteroid.style-gnosmos).
 
-Then `./website -style-dir=/path/to/your/style -asteroid-dir=example`
+Then `gnAsteroid -style-dir=/path/to/your/style -asteroid-dir=example`
 
 When no style is specified, a style similar to gnosmos, embedded 
 within the binary, is used.
