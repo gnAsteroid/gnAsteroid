@@ -8,9 +8,11 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"runtime"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/gnolang/gno/pkgs/amino"
@@ -80,11 +82,28 @@ func makeApp() gotuna.App {
 func main() {
 	flag.Parse()
 	fmt.Printf("Serving %s on http://%s\n", flags.asteroidDir, flags.bindAddr)
+
 	server := &http.Server{
 		Addr:              flags.bindAddr,
 		ReadHeaderTimeout: 60 * time.Second,
 		Handler:           makeApp().Router,
 	}
+
+	// Detect SIGUSR1 -> invalidate all templates
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGUSR1)
+	go func() {
+		for {
+			sig := <-sigChan
+			switch sig {
+			case syscall.SIGUSR1:
+				fmt.Println("received SIGUSR1.\n")
+				server.Handler = makeApp().Router
+			default:
+				// fmt.Println("Unhandled signal")
+			}
+		}
+	}()
 
 	if err := server.ListenAndServe(); err != nil {
 		fmt.Fprintf(os.Stderr, "HTTP server stopped with error: %+v\n", err)
