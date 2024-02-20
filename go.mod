@@ -3,6 +3,7 @@ module github.com/grepsuzette/gnAsteroid
 go 1.20
 
 require (
+	github.com/fsnotify/fsnotify v1.4.9
 	github.com/gnolang/gno v0.0.0-20230315163011-66d5dcc7ffee
 	github.com/gorilla/mux v1.8.0
 	github.com/gotuna/gotuna v0.6.0
@@ -17,6 +18,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgraph-io/badger/v3 v3.2103.4 // indirect
 	github.com/dgraph-io/ristretto v0.1.1 // indirect
+	github.com/dietsche/rfsnotify v0.0.0-20200716145600-b37be6e4177f // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/gnolang/cors v1.8.1 // indirect
 	github.com/gnolang/overflow v0.0.0-20170615021017-4d914c927216 // indirect
@@ -47,4 +49,5 @@ require (
 	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/tools v0.6.0 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
+	gopkg.in/fsnotify.v1 v1.4.7 // indirect
 )

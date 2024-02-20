@@ -15,6 +15,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/dietsche/rfsnotify"
+	// "github.com/fsnotify/fsnotify"
 	"github.com/gnolang/gno/pkgs/amino"
 	abci "github.com/gnolang/gno/pkgs/bft/abci/types"
 	"github.com/gnolang/gno/pkgs/bft/rpc/client"
@@ -22,6 +24,7 @@ import (
 	"github.com/gnolang/gno/pkgs/std"
 	"github.com/gorilla/mux"
 	"github.com/gotuna/gotuna"
+	"gopkg.in/fsnotify.v1"
 
 	"github.com/gnolang/gno/pkgs/sdk/vm"       // for error types
 	"github.com/grepsuzette/gnAsteroid/static" // for static files
@@ -34,7 +37,7 @@ const (
 
 var flags struct {
 	asteroidDir  string
-	asteroidName string
+	asteroidName string // note: the value that is used in the program is asteroidName
 	bindAddr     string
 	remoteAddr   string
 	styleDir     string
@@ -42,11 +45,14 @@ var flags struct {
 	helpRemote   string
 }
 
-var startedAt time.Time
+var (
+	startedAt    time.Time
+	asteroidName string // read from cmdLine, or ./.TITLE, or is "CHANGEME"
+)
 
 func init() {
 	flag.StringVar(&flags.asteroidDir, "asteroid-dir", "", "wiki directory location. [Mandatory!]")
-	flag.StringVar(&flags.asteroidName, "asteroid-name", "CHANGEME", "the asteroid name (website title). Default=CHANGEME")
+	flag.StringVar(&flags.asteroidName, "asteroid-name", "CHANGEME", "the asteroid name (website title). read from .TITLE, or CHANGEME")
 	flag.StringVar(&flags.bindAddr, "bind", "0.0.0.0:8888", "server listening address")
 	flag.StringVar(&flags.styleDir, "style-dir", "", "style directory (css, js, img). Default=<internal>")
 	flag.StringVar(&flags.remoteAddr, "remote", "127.0.0.1:26657", "remote gnoland node address")
@@ -61,6 +67,11 @@ func makeApp() gotuna.App {
 		ViewFiles: static.EmbeddedStatic, // prefix is "views/"
 		Router:    gotuna.NewMuxRouter(),
 	}
+	asteroidName = flags.asteroidName
+	if osm.FileExists(flags.asteroidDir + "/.TITLE") {
+		s := string(osm.MustReadFile(flags.asteroidDir + "/.TITLE"))
+		asteroidName = strings.NewReplacer("<", "&lt;", ">", "&gt;").Replace(s)
+	}
 	app.Router.Handle("/", handlerHome(app))
 	app.Router.Handle("/r/demo/boards:gnolang/6", handlerRedirect(app))
 	// NOTE: see rePathPart.
@@ -68,7 +79,9 @@ func makeApp() gotuna.App {
 	app.Router.Handle("/r/{rlmname:[a-z][a-z0-9_]*(?:/[a-z][a-z0-9_]*)+}", handlerRealmMain(app))
 	app.Router.Handle("/r/{rlmname:[a-z][a-z0-9_]*(?:/[a-z][a-z0-9_]*)+}:{querystr:.*}", handlerRealmRender(app))
 	app.Router.Handle("/p/{filepath:.*}", handlerPackageFile(app))
+	fmt.Println("Echo " + flags.styleDir)
 	if osm.DirExists(flags.styleDir) {
+		fmt.Println("  custom style at " + flags.styleDir)
 		app.Router.Handle("/static/{path:(?:css|font|img)/.+}", handlerAsset(app))
 	}
 	// else the style is simply in embed.FS as well:
@@ -97,13 +110,34 @@ func main() {
 			sig := <-sigChan
 			switch sig {
 			case syscall.SIGUSR1:
-				fmt.Println("received SIGUSR1.\n")
+				fmt.Println("received SIGUSR1.")
 				server.Handler = makeApp().Router
-			default:
-				// fmt.Println("Unhandled signal")
 			}
 		}
 	}()
+
+	// Watch over asteroidDir for any change -> invalidate all templates
+	if watcher, err := rfsnotify.NewWatcher(); err == nil {
+		defer watcher.Close()
+		go func() {
+			for {
+				select {
+				case event, ok := <-watcher.Events:
+					if !ok {
+						return
+					}
+					if event.Op&fsnotify.Write == fsnotify.Write {
+						fmt.Println("Reloading, modified: " + event.Name)
+						server.Handler = makeApp().Router
+					}
+				}
+			}
+		}()
+		watcher.AddRecursive(flags.asteroidDir)
+		if flags.styleDir != "" {
+			watcher.AddRecursive(flags.styleDir)
+		}
+	}
 
 	if err := server.ListenAndServe(); err != nil {
 		fmt.Fprintf(os.Stderr, "HTTP server stopped with error: %+v\n", err)
@@ -116,7 +150,7 @@ func handlerHome(app gotuna.App) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		app.NewTemplatingEngine().
-			Set("AsteroidName", flags.asteroidName).
+			Set("AsteroidName", asteroidName).
 			Set("HomeContent", string(homeContent)).
 			Render(w, r, "views/home.html", "views/funcs.html")
 	})
@@ -140,7 +174,7 @@ func handlerAnything(app gotuna.App) http.Handler {
 		}
 		if strings.Contains(file, "..") {
 			app.NewTemplatingEngine().
-				Set("AsteroidName", flags.asteroidName).
+				Set("AsteroidName", asteroidName).
 				Render(w, r, "views/403.html", "views/funcs.html")
 		}
 		// serve the file, based of its extension
@@ -148,7 +182,7 @@ func handlerAnything(app gotuna.App) http.Handler {
 		case strings.HasSuffix(file, ".md"):
 			content := osm.MustReadFile(file)
 			app.NewTemplatingEngine().
-				Set("AsteroidName", flags.asteroidName).
+				Set("AsteroidName", asteroidName).
 				Set("MainContent", string(content)).
 				Render(w, r, "views/generic.html", "views/funcs.html")
 		case strings.HasSuffix(file, ".jpg") || strings.HasSuffix(file, ".jpeg"):
@@ -218,7 +252,7 @@ func handlerRedirect(app gotuna.App) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/r/boards:gnolang/3", http.StatusFound)
 		app.NewTemplatingEngine().
-			Set("AsteroidName", flags.asteroidName).
+			Set("AsteroidName", asteroidName).
 			Render(w, r, "views/home.html", "views/funcs.html")
 	})
 }
@@ -252,7 +286,7 @@ func handlerRealmMain(app gotuna.App) http.Handler {
 			}
 			// Render template.
 			tmpl := app.NewTemplatingEngine()
-			tmpl.Set("AsteroidName", flags.asteroidName)
+			tmpl.Set("AsteroidName", asteroidName)
 			tmpl.Set("FuncName", funcName)
 			tmpl.Set("RealmPath", rlmpath)
 			// tmpl.Set("FormBodyType", query.Get("body.type")) // when "textarea", <textarea> will be used instead of <input>
@@ -268,7 +302,7 @@ func handlerRealmMain(app gotuna.App) http.Handler {
 			data := []byte(rlmpath)
 			_, err := makeRequest(qpath, data)
 			if err != nil {
-				writeError(w, errors.New("error querying realm package"))
+				writeError(w, errors.New(fmt.Errorf("error (%w) querying realm package)", err)))
 				return
 			}
 			// Render blank query path, /r/REALM:.
@@ -322,7 +356,7 @@ func handleRealmRender(app gotuna.App, w http.ResponseWriter, r *http.Request) {
 	}
 	// Render template.
 	tmpl := app.NewTemplatingEngine()
-	tmpl.Set("AsteroidName", flags.asteroidName)
+	tmpl.Set("AsteroidName", asteroidName)
 	tmpl.Set("RealmName", rlmname)
 	tmpl.Set("RealmPath", rlmpath)
 	tmpl.Set("Query", querystr)
@@ -367,7 +401,7 @@ func renderPackageFile(app gotuna.App, w http.ResponseWriter, r *http.Request, d
 		files := strings.Split(string(res.Data), "\n")
 		// Render template.
 		tmpl := app.NewTemplatingEngine()
-		tmpl.Set("AsteroidName", flags.asteroidName)
+		tmpl.Set("AsteroidName", asteroidName)
 		tmpl.Set("DirURI", diruri)
 		tmpl.Set("DirPath", pathOf(diruri))
 		tmpl.Set("Files", files)
@@ -384,7 +418,7 @@ func renderPackageFile(app gotuna.App, w http.ResponseWriter, r *http.Request, d
 		}
 		// Render template.
 		tmpl := app.NewTemplatingEngine()
-		tmpl.Set("AsteroidName", flags.asteroidName)
+		tmpl.Set("AsteroidName", asteroidName)
 		tmpl.Set("DirURI", diruri)
 		tmpl.Set("DirPath", pathOf(diruri))
 		tmpl.Set("FileName", filename)
@@ -475,7 +509,7 @@ func handlerFavicon(app gotuna.App) http.Handler {
 func handleNotFound(app gotuna.App, path string, w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
 	app.NewTemplatingEngine().
-		Set("AsteroidName", flags.asteroidName).
+		Set("AsteroidName", asteroidName).
 		Set("title", "Not found").
 		Set("path", path).
 		Render(w, r, "views/404.html", "views/funcs.html")
