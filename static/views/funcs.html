@@ -1,8 +1,7 @@
 {{ define "header_buttons" }}
 <div id="header_buttons">
   <a href="https://github.com/gnolang/gno"
-    ><img src="/static/img/github-mark-32px.png" alt="Github"
-  /></a>
+     ><img id="github32" alt="" /></a>
   <a href="#" title="Toggle dark mode" id="theme-toggle">
     <!--
       Copyright (c) 2013-2017 Cole Bemis
@@ -112,7 +111,7 @@
 {{ end }}
 {{ define "header_logo_with_back" }}
 <a class="logonav" href="javascript:window.history.back()">&nbsp;&lt;&nbsp;</a>&nbsp;
-<a class="logonav" href="/">{{- .Data.AsteroidName -}}</a>
+<a class="logonav" href="/">{{ .Data.AsteroidName }}</a>
 {{end}}
 {{ define "footer" }}
 {{ end }}
