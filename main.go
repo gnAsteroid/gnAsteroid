@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -16,7 +15,6 @@ import (
 	"time"
 
 	"github.com/dietsche/rfsnotify"
-	// "github.com/fsnotify/fsnotify"
 	"github.com/gnolang/gno/pkgs/amino"
 	abci "github.com/gnolang/gno/pkgs/bft/abci/types"
 	"github.com/gnolang/gno/pkgs/bft/rpc/client"
@@ -37,10 +35,12 @@ const (
 
 var flags struct {
 	asteroidDir  string
-	asteroidName string // note: the value that is used in the program is asteroidName
+	asteroidName string
 	bindAddr     string
 	remoteAddr   string
 	styleDir     string
+	captchaSite  string
+	faucetURL    string
 	helpChainID  string
 	helpRemote   string
 }
@@ -56,6 +56,8 @@ func init() {
 	flag.StringVar(&flags.bindAddr, "bind", "0.0.0.0:8888", "server listening address")
 	flag.StringVar(&flags.styleDir, "style-dir", "", "style directory (css, js, img). Default=<internal>")
 	flag.StringVar(&flags.remoteAddr, "remote", "127.0.0.1:26657", "remote gnoland node address")
+	flag.StringVar(&flags.captchaSite, "captcha-site", "", "recaptcha site key (if empty, captcha are disabled)")
+	flag.StringVar(&flags.faucetURL, "faucet-url", "http://localhost:5050", "faucet server URL")
 	flag.StringVar(&flags.helpChainID, "help-chainid", "dev", "help page's chainid")
 	flag.StringVar(&flags.helpRemote, "help-remote", "127.0.0.1:26657", "help page's remote addr")
 	startedAt = time.Now()
@@ -73,9 +75,10 @@ func makeApp() gotuna.App {
 		asteroidName = strings.NewReplacer("<", "&lt;", ">", "&gt;").Replace(s)
 	}
 	app.Router.Handle("/", handlerHome(app))
+	app.Router.Handle("/faucet", handlerFaucet(app))
 	app.Router.Handle("/r/demo/boards:gnolang/6", handlerRedirect(app))
 	// NOTE: see rePathPart.
-	app.Router.Handle("/r/{rlmname:[a-z][a-z0-9_]*(?:/[a-z][a-z0-9_]*)+}/{filename:(?:.*\\.(?:gno|md|txt)$)?}", handlerRealmFile(app))
+	app.Router.Handle("/r/{rlmname:[a-z][a-z0-9_]*(?:/[a-z][a-z0-9_]*)+}/{filename:(?:.*\\.(?:gno|md|txt|mod)$)?}", handlerRealmFile(app))
 	app.Router.Handle("/r/{rlmname:[a-z][a-z0-9_]*(?:/[a-z][a-z0-9_]*)+}", handlerRealmMain(app))
 	app.Router.Handle("/r/{rlmname:[a-z][a-z0-9_]*(?:/[a-z][a-z0-9_]*)+}:{querystr:.*}", handlerRealmRender(app))
 	app.Router.Handle("/p/{filepath:.*}", handlerPackageFile(app))
@@ -302,7 +305,7 @@ func handlerRealmMain(app gotuna.App) http.Handler {
 			data := []byte(rlmpath)
 			_, err := makeRequest(qpath, data)
 			if err != nil {
-				writeError(w, errors.New(fmt.Errorf("error (%w) querying realm package)", err)))
+				writeError(w, fmt.Errorf("error (%w) querying realm package)", err))
 				return
 			}
 			// Render blank query path, /r/REALM:.
@@ -504,6 +507,15 @@ func handlerFavicon(app gotuna.App) http.Handler {
 			io.Copy(w, f)
 		})
 	}
+}
+
+func handlerFaucet(app gotuna.App) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		app.NewTemplatingEngine().
+			Set("captchaSite", flags.captchaSite).
+			Set("faucetURL", flags.faucetURL).
+			Render(w, r, "views/faucet.html", "views/funcs.html")
+	})
 }
 
 func handleNotFound(app gotuna.App, path string, w http.ResponseWriter, r *http.Request) {
