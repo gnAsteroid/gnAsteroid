@@ -15,16 +15,16 @@ import (
 	"time"
 
 	"github.com/dietsche/rfsnotify"
-	"github.com/gnolang/gno/pkgs/amino"
-	abci "github.com/gnolang/gno/pkgs/bft/abci/types"
-	"github.com/gnolang/gno/pkgs/bft/rpc/client"
-	osm "github.com/gnolang/gno/pkgs/os"
-	"github.com/gnolang/gno/pkgs/std"
+	"github.com/gnolang/gno/tm2/pkg/amino"
+	abci "github.com/gnolang/gno/tm2/pkg/bft/abci/types"
+	"github.com/gnolang/gno/tm2/pkg/bft/rpc/client"
+	osm "github.com/gnolang/gno/tm2/pkg/os"
+	"github.com/gnolang/gno/tm2/pkg/std"
 	"github.com/gorilla/mux"
 	"github.com/gotuna/gotuna"
 	"gopkg.in/fsnotify.v1"
 
-	"github.com/gnolang/gno/pkgs/sdk/vm"       // for error types
+	"github.com/gnolang/gno/gno.land/pkg/sdk/vm"       // for error types
 	"github.com/grepsuzette/gnAsteroid/static" // for static files
 	// "github.com/gnolang/gno/pkgs/sdk"       // for baseapp (info, status)
 )
@@ -436,7 +436,10 @@ func makeRequest(qpath string, data []byte) (res *abci.ResponseQuery, err error)
 		// Prove: false, XXX
 	}
 	remote := flags.remoteAddr
-	cli := client.NewHTTP(remote, "/websocket")
+	cli, err := client.NewHTTPClient(remote)
+	if err != nil {
+		return nil, fmt.Errorf("unable to create HTTP client, %w", err)
+	}
 	qres, err := cli.ABCIQueryWithOptions(
 		qpath, data, opts2)
 	if err != nil {
