@@ -188,8 +188,11 @@ func handlerAnything(app gotuna.App) http.Handler {
 				Set("AsteroidName", asteroidName).
 				Set("MainContent", string(content)).
 				Render(w, r, "views/generic.html", "views/funcs.html")
-		case strings.HasSuffix(file, ".jpg") || strings.HasSuffix(file, ".jpeg"):
-			http.ServeFile(w, r, file)
+		case strings.HasSuffix(file, ".jpg"),
+		     strings.HasSuffix(file, ".jpeg"),
+			 strings.HasSuffix(file, ".png"),
+			 strings.HasSuffix(file, ".gif"):
+				http.ServeFile(w, r, file)
 		default:
 			if osm.FileExists(file) {
 				w.Write([]byte("Unrecognized extension"))
