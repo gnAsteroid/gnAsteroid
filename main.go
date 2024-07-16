@@ -1,27 +1,27 @@
 package main
 
 import (
+	"embed"
 	"flag"
 	"fmt"
 	"io/fs"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strings"
 	"syscall"
 	"time"
 
-	// ------------------------ copied over from cmd/gnoweb
+	"github.com/dietsche/rfsnotify"
 	"github.com/gnolang/gno/gno.land/pkg/gnoweb"
 	"github.com/gnolang/gno/gno.land/pkg/log"
 	osm "github.com/gnolang/gno/tm2/pkg/os"
+	"github.com/gotuna/gotuna"
+	"github.com/yalue/merged_fs"
 	"go.uber.org/zap/zapcore"
-	// ------------------------
-	"github.com/dietsche/rfsnotify"
 	"gopkg.in/fsnotify.v1"
-
-	"github.com/gnolang/gno/gno.land/pkg/sdk/vm" // for error types
-	"github.com/grepsuzette/gnAsteroid/static"   // for static files
 )
 
 var (
@@ -31,11 +31,14 @@ var (
 	bindAddr     string
 )
 
+//go:embed asteroid*.html
+var asteroidTemplates embed.FS
+
 func init() {
 	startedAt = time.Now()
 }
 
-func parseArgs(args []string) (gnoweb.Config, error) {
+func parseArgs(args []string, logger *slog.Logger) (gnoweb.Config, error) {
 	cfg := gnoweb.NewDefaultConfig()
 	fs := flag.NewFlagSet("gnoweb", flag.ContinueOnError)
 	fs.StringVar(&asteroidDir, "asteroid-dir", "", "wiki directory location. [Mandatory!]")
@@ -47,35 +50,49 @@ func parseArgs(args []string) (gnoweb.Config, error) {
 	fs.StringVar(&cfg.FaucetURL, "faucet-url", "http://localhost:5050", "faucet server URL")
 	fs.StringVar(&cfg.HelpChainID, "help-chainid", "dev", "help page's chainid")
 	fs.StringVar(&cfg.HelpRemote, "help-remote", "127.0.0.1:26657", "help page's remote addr")
-	fs.StringVar(&cfg.WithAnalytics, "with-analytics", cfg.WithAnalytics, "enable privacy-first analytics")
+	fs.BoolVar(&cfg.WithAnalytics, "with-analytics", cfg.WithAnalytics, "enable privacy-first analytics")
 
-	// if asteroidName has default value, check if <asteroidDir>/.TITLE exists
-	if asteroidName == "CHANGEME" && osm.FileExists(asteroidDir+"/.TITLE") {
-		s := string(osm.MustReadFile(asteroidDir + "/.TITLE"))
-		asteroidName = strings.NewReplacer("<", "&lt;", ">", "&gt;").Replace(s)
+	if parseError := fs.Parse(args); parseError != nil {
+		return cfg, parseError
 	}
 
-	return cfg, fs.Parse(args)
+	// if asteroidName has default value, check whether <asteroidDir>/.TITLE exists
+	if asteroidName == "CHANGEME" && osm.FileExists(asteroidDir+"/.TITLE") {
+		s := string(osm.MustReadFile(asteroidDir + "/.TITLE"))
+		s = strings.NewReplacer("<", "&lt;", ">", "&gt;").Replace(s)
+		logger.Debug(fmt.Sprintf("asteroidName is %s and exists %s -> changing asteroidName to %q", asteroidName, asteroidDir+"/.TITLE", s))
+		asteroidName = s
+	}
+
+	return cfg, nil
 }
 
 func main() {
-	cfg, e := parseArgs(os.Args[1:])
-	if e != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "%+v\n", err)
-		os.Exit(1)
-	}
 	zapLogger := log.NewZapConsoleLogger(os.Stdout, zapcore.DebugLevel)
 	logger := log.ZapLoggerToSlog(zapLogger)
-	logger.Info("Serving", asteroidDir, " on ", "http://", bindAddr)
 
+	cfg, e := parseArgs(os.Args[1:], logger)
+	if e != nil {
+		fmt.Fprintf(os.Stderr, "%+v\n", e)
+		os.Exit(1)
+	}
+	logger.Info(fmt.Sprintf("Serving %s on http://%s", asteroidDir, bindAddr))
+
+	gnowebViews, e := fs.Sub(gnoweb.DefaultViewsFiles, "views")
+	if e != nil {
+		panic("Could not find gnoweb views: " + e.Error())
+	}
 	makeApp := func() http.Handler {
 		return gnoweb.MakeAppWithOptions(logger, cfg, gnoweb.Options{
 			RootHandler:     handlerHome,
 			NotFoundHandler: handlerAnything,
+			ViewFS: merged_fs.NewMergedFS(
+				gnowebViews,
+				asteroidTemplates,
+			),
 		}).Router
 	}
 
-	none := map[string]string{}
 	server := &http.Server{
 		Addr:              bindAddr,
 		ReadHeaderTimeout: 60 * time.Second,
@@ -107,38 +124,47 @@ func main() {
 						return
 					}
 					if event.Op&fsnotify.Write == fsnotify.Write {
-						logger.Info("Reloading, modified: ", event.Name)
+						logger.Info("Reloading, modified: " + event.Name)
 						server.Handler = makeApp()
 					}
 				}
 			}
 		}()
-		watcher.AddRecursive(flags.asteroidDir)
-		if flags.StyleDir != "" {
-			watcher.AddRecursive(flags.StyleDir)
+		watcher.AddRecursive(asteroidDir)
+		if cfg.StyleDir != "" {
+			watcher.AddRecursive(cfg.StyleDir)
 		}
 	}
 
 	if err := server.ListenAndServe(); err != nil {
-		logger.Error("HTTP server stopped with error: %+v\n", err)
+		logger.Error(fmt.Sprintf("HTTP server stopped with error: %+v\n", err))
 	}
-	return zapLogger.Sync()
+	zapLogger.Sync()
 }
 
-func handlerHome(_, app gotuna.App) http.Handler {
-	md := filepath.Join(flags.asteroidDir, "index.md")
-	homeContent := osm.MustReadFile(md)
+func handlerHome(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.Handler {
+	index_md := filepath.Join(asteroidDir, "index.md")
+	homeContent := osm.MustReadFile(index_md)
+	// logger.Debug(string(homeContent))
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		app.NewTemplatingEngine().
 			Set("AsteroidName", asteroidName).
 			Set("HomeContent", string(homeContent)).
-			Render(w, r, "views/home.html", "views/funcs.html")
+			Set("Config", cfg). // for things like Data.Config.WithAnalytics
+			Render(
+				w, r,
+				"asteroidHome.html",
+				"asteroidFuncs.html",
+			)
 	})
 }
 
-func handlerAnything(_, app gotuna.App) http.Handler {
+func handlerAnything(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		file := filepath.Join(flags.asteroidDir, mux.Vars(r)["anything"])
+		// TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+		// TODO decode HTMLentities
+		url := r.URL.String() // TODO right now it is like /conjects/Walking, need to sanitize
+		file := filepath.Join(asteroidDir, filepath.Clean(url))
 		if osm.DirExists(file) && osm.FileExists(file+"/index.md") {
 			// it's a dir
 			file = file + "/index.md"
@@ -152,19 +178,27 @@ func handlerAnything(_, app gotuna.App) http.Handler {
 			http.Error(w, "Not Found", http.StatusNotFound)
 			return
 		}
+		// TODO decode HTMLentities
+		// TODO check, but think unnecessary
 		if strings.Contains(file, "..") {
 			app.NewTemplatingEngine().
 				Set("AsteroidName", asteroidName).
-				Render(w, r, "views/403.html", "views/funcs.html")
+				Set("Config", cfg).
+				Render(w, r, "asteroid403.html", "asteroidFuncs.html")
+			// Render(w, r, "404.html", "asteroidFuncs.html")
 		}
-		// serve the file, based of its extension
+		// serve file based on extension
 		switch {
 		case strings.HasSuffix(file, ".md"):
 			content := osm.MustReadFile(file)
 			app.NewTemplatingEngine().
 				Set("AsteroidName", asteroidName).
 				Set("MainContent", string(content)).
-				Render(w, r, "views/generic.html", "views/funcs.html")
+				Set("Config", cfg).
+				Render(w, r,
+					"asteroidFuncs.html",
+					"asteroidGeneric.html",
+				)
 		case strings.HasSuffix(file, ".jpg"),
 			strings.HasSuffix(file, ".jpeg"),
 			strings.HasSuffix(file, ".png"),

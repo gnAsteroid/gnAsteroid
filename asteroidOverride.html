@@ -1,0 +1,9 @@
+{{- define "logo" -}}
+<a class="logonav" href="/">{{ .Data.AsteroidName }}</a>
+{{- end -}}
+
+{{- define "logo_with_back" -}}
+<a class="logonav" href="javascript:window.history.back()">&nbsp;&lt;&nbsp;</a>&nbsp;
+<a class="logonav" href="/">{{ .Data.AsteroidName }}</a>
+{{- end -}}
+

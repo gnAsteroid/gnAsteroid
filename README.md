@@ -2,7 +2,7 @@ Asteroids are simple websites or personal wikis that can interact with the Realm
 
 You can use it to setup personal blogs, organisation websites, research areas, presenting newly discovered gems in the gnoland or just to experiment. Like gno.land, it's a kind of wiki-like platform that can link to smart-contract on Gno, with redactional and stylistic autonomy.
 
-gnAsteroid is a fork of the [gno.land](https://gno.land) website. However it doesn't intend to compete with it. It's made to gravitate around it using the same idea.
+gnAsteroid is built on the [gnoweb package](https://github.com/gnolang/gno/tree/master/gno.land/pkg/gnoweb) from [gno.land](https://gno.land). It doesn't intend to compete with it of course, since it's plugged onto the same realms (smart contracts) but asteroids are made to gravitate around gno.land using the same idea.
 
 # Minimal example
 
@@ -48,7 +48,6 @@ within the binary, is used.
 # TODO
 
 - The doc could be an asteroid.
-- views/ may also need to be part of styles... hum? better not
 - a realm to register asteroid belts?
 - querying asteroid belts to show links?
 
