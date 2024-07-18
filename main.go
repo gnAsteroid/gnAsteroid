@@ -32,8 +32,8 @@ var (
 	bindAddr     string
 )
 
-//go:embed asteroid*.html
-var asteroidTemplates embed.FS
+//go:embed views/*.html
+var asteroidTemplates embed.FS // composed with gnoweb's, using merged_fs
 
 func init() {
 	startedAt = time.Now()
@@ -45,7 +45,7 @@ func parseArgs(args []string, logger *slog.Logger) (gnoweb.Config, error) {
 	fs.StringVar(&asteroidDir, "asteroid-dir", "", "wiki directory location. [Mandatory!]")
 	fs.StringVar(&asteroidName, "asteroid-name", "CHANGEME", "the asteroid name (website title). read from .TITLE, or CHANGEME")
 	fs.StringVar(&bindAddr, "bind", "0.0.0.0:8888", "server listening address")
-	fs.StringVar(&cfg.StyleDir, "style-dir", "", "style directory (css, js, img). Default is to use embedded gnoweb style")
+	fs.StringVar(&cfg.StyleDir, "style-dir", "default-style", "style directory (css, js, img). Default is to use embedded gnoweb style")
 	fs.StringVar(&cfg.RemoteAddr, "remote", "127.0.0.1:26657", "remote gnoland node address")
 	fs.StringVar(&cfg.CaptchaSite, "captcha-site", "", "recaptcha site key (if empty, captcha are disabled)")
 	fs.StringVar(&cfg.FaucetURL, "faucet-url", "http://localhost:5050", "faucet server URL")
@@ -53,6 +53,7 @@ func parseArgs(args []string, logger *slog.Logger) (gnoweb.Config, error) {
 	fs.StringVar(&cfg.HelpRemote, "help-remote", "127.0.0.1:26657", "help page's remote addr")
 	fs.BoolVar(&cfg.WithAnalytics, "with-analytics", cfg.WithAnalytics, "enable privacy-first analytics")
 
+	// let's parse cli, baby
 	if parseError := fs.Parse(args); parseError != nil {
 		return cfg, parseError
 	}
@@ -79,7 +80,7 @@ func main() {
 	}
 	logger.Info(fmt.Sprintf("Serving %s on http://%s", asteroidDir, bindAddr))
 
-	gnowebViews, e := fs.Sub(gnoweb.DefaultViewsFiles, "views")
+	gnowebViews, e := fs.Sub(gnoweb.DefaultViewsFiles(), "views")
 	if e != nil {
 		panic("Could not find gnoweb views: " + e.Error())
 	}
@@ -146,13 +147,12 @@ func main() {
 func handlerHome(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.Handler {
 	index_md := filepath.Join(asteroidDir, "index.md")
 	homeContent := osm.MustReadFile(index_md)
-	// logger.Debug(string(homeContent))
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		app.NewTemplatingEngine().
 			Set("AsteroidName", asteroidName).
 			Set("HomeContent", string(homeContent)).
 			Set("Config", cfg).
-			Render(w, r, "asteroidHome.html", "asteroidFuncs.html")
+			Render(w, r, "views/asteroidHome.html", "views/asteroidFuncs.html")
 	})
 }
 
@@ -179,7 +179,7 @@ func handlerAnything(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) ht
 			app.NewTemplatingEngine().
 				Set("AsteroidName", asteroidName).
 				Set("Config", cfg).
-				Render(w, r, "asteroid403.html", "asteroidFuncs.html")
+				Render(w, r, "views/asteroid403.html", "views/asteroidFuncs.html")
 		}
 		// serve based on file extension
 		switch {
@@ -189,7 +189,7 @@ func handlerAnything(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) ht
 				Set("AsteroidName", asteroidName).
 				Set("MainContent", string(content)).
 				Set("Config", cfg).
-				Render(w, r, "asteroidFuncs.html", "asteroidGeneric.html")
+				Render(w, r, "views/asteroidFuncs.html", "views/asteroidGeneric.html")
 		case strings.HasSuffix(file, ".jpg"),
 			strings.HasSuffix(file, ".jpeg"),
 			strings.HasSuffix(file, ".png"),

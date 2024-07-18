@@ -1,0 +1,5 @@
+Those views are made to work next 
+to the views in gnoweb's embedFS,
+not independently.
+
+They are composed using a merged_fs.

@@ -4,8 +4,13 @@
 /* @import "color-dark.css" screen and (prefers-color-scheme: dark); */
 @import "hljs.css";
 
+/* When document goes through a printer, don't show the header */
+@media print {
+  div#header { display: none; }
+}
+
 /* this is the main stylesheet.
- * we should strive to not put colors inside.
+ * try not to put colors inside.
  * (see color-*.css for day/night and hljs.css for code highlighting)
  */
 
@@ -34,31 +39,9 @@ html,
 body {
   transition: 0.25s all ease;
   line-height: 1.54em;
-  /*removed for gnosmos.css*/
-  /* padding: 0; */
-  /* margin: 0; */
-  /* font-family: "Roboto Mono", "Courier New", "sans-serif"; */
-  /* font-size: 15px; */
+	font-family: Charter, 'Bitstream Charter', 'Sitka Text', Cambria, serif; font-weight: normal;
 }
 
-/*removed for gnosmos.css*/
-/* body { */
-/*   height: 100%; */
-/*   width: 100%; */
-/* } */
-
-/* input { */
-/*   -webkit-appearance: none; */
-/*   -moz-appearance: none; */
-/*   appearance: none; */
-/* } */
-
-/* input { */
-/*   font-family: "Roboto Mono", "Monaco", monospace; */
-/*   border-width: 1px; */
-/*   border-style: solid; */
-/*   width: 25em; */
-/* } */
 
 blockquote blockquote {
   margin: 0;
@@ -73,44 +56,28 @@ code {
   /* padding: 5px 5px 0 5px; */
   font-size: 1.04em;
   font-size: 0.87em;
+  overflow: auto;
+}
+
+pre > code {
+  font-size: 0.9em;
 }
 
 /*** PAGE LAYOUT ***/
 
-/* #root { */
-/*   display: flex; */
-/*   flex-direction: column; */
-/*   border-width: 1px; */
-/*   border-style: solid; */
-/*   margin: 20px; */
-/*   /1* height: calc(100vh - 40px); *1/ */
-/* } */
-#root {
-  padding: .5em;
-  margin: 10px 10px;
-}
+#root { margin: 20px; }
 
-/* #header { */
-/*   padding: 22px; */
-/*   display: flex; */
-/*   align-items: center; */
-/*   justify-content: space-between; */
-/* } */
 #header {
+  padding: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   border-top-left-radius: 0.5em;
   border-top-right-radius: 0.5em;
-  padding: 1em 1em 0 1em;
+  padding: .5em .75em .5em 1em;
   margin-bottom: 0;
-  box-shadow: rgb(76, 84, 92) 3px 3px 1px -2px;
   height: 38px;
 }
-
-/* #header { */
-/*   padding: 22px; */
-/*   display: flex; */
-/*   align-items: center; */
-/*   justify-content: space-between; */
-/* } */
 
 div#header + div {
   margin-top: 0px;
@@ -127,39 +94,54 @@ div#realm_render {
   padding: 0 15px 15px 15px;
 }
 
+div#home table { 
+  border-collapse: collapse; 
+  box-shadow: #00000020 1px 1px 5px;
+  border-radius: 5px;
+}
+div#home table, th, td { 
+  border: 1px solid #00000070; 
+  padding: 3px;
+}
+
 a { text-decoration: none; }
 
 #header_buttons {
   float: right;
   position: relative;
   padding-left: 22px;
+  padding-top: .5em;
   margin-left: auto;
 }
 
-#realm_links { 
-  position: absolute;
-  top: 3.3em; 
-  padding-left: 1em;
-}
 
 #logo, .logonav {
   position: relative;
   font-size: 1.5em;
 }
 
-/* #logo_path a:hover { text-decoration: underline; } */
 
 #logo_path { 
-  position: absolute;
-  padding-left: 1em;
+  position: relative; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
+#logo_path a:hover { text-decoration: underline; }
+
+#realm_links { position: relative; padding-left: 0.25em; }
+#realm_links a:hover { text-decoration: underline; }
 
 /* enabled conditionally with <noscript> */
-#source {
-  display: none;
-}
+#source { display: none; }
 
 /*** REALM HELP ***/
+
+html #realm_help .func_spec .shell_command { 
+  /* font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace; */
+  font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+  font-weight: normal;
+}
 
 #realm_help .func_spec > table > tbody > tr > th {
   width: 50px;

@@ -1,0 +1,70 @@
+/* this is the light color stylesheet 
+ * it should only contain colors.
+ */
+
+html[data-theme="light"] html, html[data-theme="light"] body {  background-color: #7da1da; }
+html[data-theme="light"] html, html[data-theme="light"] body, html[data-theme="light"] input { color: #000; }
+html[data-theme="light"] body img#github32 { background-image:url(/static/img/github-inverted-mark-32px.png); width: 32px; height: 32px; content:url(/static/img/github-inverted-mark-32px.png) }
+html[data-theme="light"] a.logonav { color: #b8b8b8; }
+html[data-theme="light"] a.logonav:hover { background-color: #0093ff70; color: #f19c9c; }
+html[data-theme="light"] a, html[data-theme="light"] #logo { color: #0093ff; }
+html[data-theme="light"] a:hover {
+    color: #988;
+}
+
+/* This shows external links à la Wikipedia: */
+html[data-theme="light"] a[href^="http"]:after {
+    content: " " url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAVklEQVR4Xn3PgQkAMQhDUXfqTu7kTtkpd5RA8AInfArtQ2iRXFWT2QedAfttj2FsPIOE1eCOlEuoWWjgzYaB/IkeGOrxXhqB+uA9Bfcm0lAZuh+YIeAD+cAqSz4kCMUAAAAASUVORK5CYII=);
+}
+html[data-theme="light"] #header_buttons a[href^="http"]:after {
+     content: none;
+}
+
+html[data-theme="light"] input { background-color: #eee; border-color: #ccc; }
+html[data-theme="light"] blockquote { background-color: #ddd; }
+html[data-theme="light"] blockquote blockquote { background-color: #aaa4; }
+html[data-theme="light"] div#header + div {
+  background-color: rgb(234, 234, 234);
+}
+
+html[data-theme="light"] hr {
+  border-color: #93939345;
+  border-style: dashed;
+  border-width: 3px;
+  margin: 1.5em .5em;
+}
+
+html[data-theme="light"] #root { 
+  border-color: #d7d9db; 
+  /* box-shadow: rgba(43, 46, 50,55%) 1px 1px 0px 0px; */
+  box-shadow: rgb(50, 50, 50) 0.2em 0.2em 1em -1em;
+  border-radius: .5em;
+}
+html[data-theme="light"] #header { 
+background-color: black;
+}
+
+html[data-theme="light"] span#logo_path { color: darkgrey; }
+
+html[data-theme="light"] #realm_help .func_spec { background-color: #d7d9db9e; }
+html[data-theme="light"] #realm_help .func_spec:nth-child(odd) { background: #d7d9db45; }
+html[data-theme="light"] #realm_help .func_spec .shell_command { color: slategrey; }
+html[data-theme="light"] #realm_help .func_spec > table > tbody > tr > th { color: #000; }
+
+/* ```<code>``` */
+html[data-theme="light"] pre > code {
+  /* background-color: hsl(210, 30%, 80%); */ 
+  background-color: lightgrey;
+  display: block;
+  padding: 1em 2em;
+  /* font-size: 1.02em; */
+}
+
+
+
+/* `word`: <code> tags inside <pre> that are not immediate children */
+html[data-theme="light"] code:not(pre > code) {
+  border: 1px #ccc dashed; 
+  padding: 1px 0.382em;
+  background-color: #ddd;
+}
