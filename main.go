@@ -1,9 +1,11 @@
 package main
 
 import (
+	"embed"
 	"flag"
 	"fmt"
 	"html"
+	"io/fs"
 	"log/slog"
 	"net/http"
 	"os"
@@ -18,6 +20,7 @@ import (
 	"github.com/gnolang/gno/gno.land/pkg/log"
 	osm "github.com/gnolang/gno/tm2/pkg/os"
 	"github.com/gotuna/gotuna"
+	"github.com/yalue/merged_fs"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/fsnotify.v1"
 )
@@ -28,6 +31,9 @@ var (
 	asteroidDir  string
 	bindAddr     string
 )
+
+//go:embed asteroid*.html
+var asteroidTemplates embed.FS
 
 func init() {
 	startedAt = time.Now()
@@ -46,7 +52,7 @@ func parseArgs(args []string, logger *slog.Logger) (gnoweb.Config, error) {
 	fs.StringVar(&cfg.HelpChainID, "help-chainid", "dev", "help page's chainid")
 	fs.StringVar(&cfg.HelpRemote, "help-remote", "127.0.0.1:26657", "help page's remote addr")
 	fs.BoolVar(&cfg.WithAnalytics, "with-analytics", cfg.WithAnalytics, "enable privacy-first analytics")
-	cfg.ViewsDir = "views"
+
 	if parseError := fs.Parse(args); parseError != nil {
 		return cfg, parseError
 	}
@@ -73,10 +79,18 @@ func main() {
 	}
 	logger.Info(fmt.Sprintf("Serving %s on http://%s", asteroidDir, bindAddr))
 
+	gnowebViews, e := fs.Sub(gnoweb.DefaultViewsFiles, "views")
+	if e != nil {
+		panic("Could not find gnoweb views: " + e.Error())
+	}
 	makeApp := func() http.Handler {
 		return gnoweb.MakeAppWithOptions(logger, cfg, gnoweb.Options{
 			RootHandler:     handlerHome,
 			NotFoundHandler: handlerAnything,
+			ViewFS: merged_fs.NewMergedFS(
+				gnowebViews,
+				asteroidTemplates,
+			),
 		}).Router
 	}
 
@@ -132,6 +146,7 @@ func main() {
 func handlerHome(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.Handler {
 	index_md := filepath.Join(asteroidDir, "index.md")
 	homeContent := osm.MustReadFile(index_md)
+	// logger.Debug(string(homeContent))
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		app.NewTemplatingEngine().
 			Set("AsteroidName", asteroidName).
