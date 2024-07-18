@@ -55,6 +55,7 @@ within the binary, is used.
 - [ ] query asteroid belts to show links
 - [ ] some kind of publication system
 - [ ] better `<table>` styling
+- [ ] investigate: web browser + gnoweb don't re-load css correctly at the moment
 
 # More 
 

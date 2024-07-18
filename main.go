@@ -29,11 +29,15 @@ var (
 	startedAt    time.Time
 	asteroidName string // read from cmdLine, or file called .TITLE at root, or "CHANGEME"
 	asteroidDir  string
+	styleDir     string
 	bindAddr     string
 )
 
 //go:embed views/*.html
 var asteroidTemplates embed.FS // composed with gnoweb's, using merged_fs
+
+//go:embed default-style/*
+var defaultEmbedStyle embed.FS
 
 func init() {
 	startedAt = time.Now()
@@ -42,10 +46,12 @@ func init() {
 func parseArgs(args []string, logger *slog.Logger) (gnoweb.Config, error) {
 	cfg := gnoweb.NewDefaultConfig()
 	fs := flag.NewFlagSet("gnoweb", flag.ContinueOnError)
+	// gnAsteroid flags
 	fs.StringVar(&asteroidDir, "asteroid-dir", "", "wiki directory location. [Mandatory!]")
 	fs.StringVar(&asteroidName, "asteroid-name", "CHANGEME", "the asteroid name (website title). read from .TITLE, or CHANGEME")
+	fs.StringVar(&styleDir, "style-dir", "", "style directory (css, js, img). Default is '', meaning \"use embed 'default-style/'\"")
 	fs.StringVar(&bindAddr, "bind", "0.0.0.0:8888", "server listening address")
-	fs.StringVar(&cfg.StyleDir, "style-dir", "default-style", "style directory (css, js, img). Default is to use embedded gnoweb style")
+	// gnoweb flags
 	fs.StringVar(&cfg.RemoteAddr, "remote", "127.0.0.1:26657", "remote gnoland node address")
 	fs.StringVar(&cfg.CaptchaSite, "captcha-site", "", "recaptcha site key (if empty, captcha are disabled)")
 	fs.StringVar(&cfg.FaucetURL, "faucet-url", "http://localhost:5050", "faucet server URL")
@@ -80,6 +86,14 @@ func main() {
 	}
 	logger.Info(fmt.Sprintf("Serving %s on http://%s", asteroidDir, bindAddr))
 
+	var styleFs fs.FS
+	if styleDir == "" {
+		// embed style is newcomer-friendly
+		styleFs = defaultEmbedStyle
+	} else {
+		styleFs = os.DirFS(styleDir)
+	}
+
 	gnowebViews, e := fs.Sub(gnoweb.DefaultViewsFiles(), "views")
 	if e != nil {
 		panic("Could not find gnoweb views: " + e.Error())
@@ -88,6 +102,7 @@ func main() {
 		return gnoweb.MakeAppWithOptions(logger, cfg, gnoweb.Options{
 			RootHandler:     handlerHome,
 			NotFoundHandler: handlerAnything,
+			StyleFS:         styleFs,
 			ViewFS: merged_fs.NewMergedFS(
 				gnowebViews,
 				asteroidTemplates,
@@ -133,8 +148,8 @@ func main() {
 			}
 		}()
 		watcher.AddRecursive(asteroidDir)
-		if cfg.StyleDir != "" {
-			watcher.AddRecursive(cfg.StyleDir)
+		if styleDir != "" {
+			watcher.AddRecursive(styleDir)
 		}
 	}
 
