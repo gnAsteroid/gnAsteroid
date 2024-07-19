@@ -46,7 +46,7 @@ modify the style at [grepsuzette/gnAsteroid.style-gnosmos](https://github.com/gr
 
 Then `gnAsteroid -style-dir=/path/to/your/style -asteroid-dir=example`
 
-When no style is specified, a style similar to gnosmos, embedded 
+When no style is specified, a default style, embedded 
 within the binary, is used.
 
 # TODO
