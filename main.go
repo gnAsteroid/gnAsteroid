@@ -27,7 +27,8 @@ import (
 
 var (
 	asteroidName string // read from cmdLine, or file called .TITLE at root, or "CHANGEME"
-	asteroidDir  string
+	asteroidDir  string // asteroidDir will be read and become asteroidFs
+	asteroidFs   fs.FS  // ultimately used by HandlerHome and HandlerAnything
 	styleDir     string
 	bindAddr     string // not used when HandleAsteroid()
 )
@@ -38,20 +39,18 @@ var newViews embed.FS // composed with gnoweb's, using merged_fs
 //go:embed default-style/*
 var defaultEmbedStyle embed.FS
 
-// Run the whole thing (asteroid+gnoweb) as an http.Handler.
-// This function is exported so you can use this
-// as a lib (vercel?). In that case, you would not use
-// main, nor need args, or a server.
-//
-func HandleAsteroid(styleDir_, asteroidDir_, asteroidName_ string, cfg gnoweb.Config) http.Handler {
-	styleDir = styleDir_
-	asteroidDir = asteroidDir_
-	asteroidName = asteroidName_
-	bindAddr = "" // not used in that case
-	return makeApp(slog.Default(), cfg, StyleFsFrom(styleDir))
+// these 3 are used by packages such as pkg/vercel
+func SetAsteroidFs(asteroid fs.FS) { asteroidFs = asteroid }
+func SetAsteroidName(name string)  { asteroidName = name }
+func DefaultStyle() fs.FS {
+	if x, e := fs.Sub(defaultEmbedStyle, "default-style"); e == nil {
+		return x
+	} else {
+		panic("bad go:embed? " + e.Error())
+	}
 }
 
-func makeApp(logger *slog.Logger, cfg gnoweb.Config, styleFs fs.FS) http.Handler {
+func MakeApp(logger *slog.Logger, cfg gnoweb.Config, styleFs fs.FS) http.Handler {
 	gnowebViews, e := fs.Sub(gnoweb.DefaultViewsFiles(), "views")
 	if e != nil {
 		panic("Could not find gnoweb views: " + e.Error())
@@ -65,7 +64,6 @@ func makeApp(logger *slog.Logger, cfg gnoweb.Config, styleFs fs.FS) http.Handler
 }
 
 // main() for cli gnAsteroid.
-// cli-less usage of this is HandleAsteroid().
 func main() {
 	zapLogger := log.NewZapConsoleLogger(os.Stdout, zapcore.DebugLevel)
 	logger := log.ZapLoggerToSlog(zapLogger)
@@ -80,7 +78,7 @@ func main() {
 	server := &http.Server{
 		Addr:              bindAddr,
 		ReadHeaderTimeout: 60 * time.Second,
-		Handler:           makeApp(logger, cfg, styleFs),
+		Handler:           MakeApp(logger, cfg, styleFs),
 	}
 
 	// SIGUSR1 -> invalidate all templates
@@ -92,7 +90,7 @@ func main() {
 			switch sig {
 			case syscall.SIGUSR1:
 				fmt.Println("received SIGUSR1.")
-				server.Handler = makeApp(logger, cfg, styleFs)
+				server.Handler = MakeApp(logger, cfg, styleFs)
 			}
 		}
 	}()
@@ -109,7 +107,7 @@ func main() {
 					}
 					if event.Op&fsnotify.Write == fsnotify.Write {
 						logger.Info("Reloading, modified: " + event.Name)
-						server.Handler = makeApp(logger, cfg, styleFs)
+						server.Handler = MakeApp(logger, cfg, styleFs)
 					}
 				}
 			}
@@ -152,14 +150,33 @@ func parseArgs(args []string, logger *slog.Logger) (gnoweb.Config, error) {
 		logger.Debug(fmt.Sprintf("asteroidName is %s and exists %s -> changing asteroidName to %q", asteroidName, asteroidDir+"/.TITLE", s))
 		asteroidName = s
 	}
+	// asteroidDir must be transformed into asteroidFs
+	asteroidFs = os.DirFS(asteroidDir)
 	return cfg, nil
 }
 
-// this is a handler that serves /
-// it is used when gnoweb needs to serve a root index.md file.
+// handler serving /
+// it is used when gnoweb needs to serve a root index.md or README.md file.
+// TODO rename HandlerRoot
 func HandlerHome(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.Handler {
-	index_md := filepath.Join(asteroidDir, "index.md")
-	homeContent := osm.MustReadFile(index_md)
+	var rootFile fs.File
+	var e error
+	rootFile, e = asteroidFs.Open("index.md")
+	if e != nil {
+		rootFile, e = asteroidFs.Open("README.md")
+	}
+	if e != nil {
+		panic("asteroid must include /index.md or /README.md")
+	}
+	fileInfo, _ := rootFile.Stat()
+	buf := make([]byte, fileInfo.Size())
+
+	_, e = rootFile.Read(buf)
+	if e != nil {
+		panic(e.Error())
+	}
+	// homeContent := osm.MustReadFile(file)
+	homeContent := buf
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		app.NewTemplatingEngine().
 			Set("AsteroidName", asteroidName).
