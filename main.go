@@ -205,7 +205,7 @@ func HandlerAnything(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) ht
 			return
 		case osm.FileExists(file):
 		default:
-			http.Error(w, "Not Found", http.StatusNotFound)
+			http.Error(w, "Not Found: "+file, http.StatusNotFound)
 			return
 		}
 		if strings.Contains(file, "..") {
@@ -232,7 +232,7 @@ func HandlerAnything(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) ht
 			if osm.FileExists(file) {
 				w.Write([]byte("Unrecognized extension"))
 			} else {
-				http.Error(w, "Not Found", http.StatusNotFound)
+				http.Error(w, "Not Found: "+file, http.StatusNotFound)
 			}
 		}
 	})

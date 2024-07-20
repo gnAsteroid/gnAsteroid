@@ -9,7 +9,7 @@ import (
 	"github.com/grepsuzette/gnAsteroid"
 )
 
-//go:embed neptune/*
+//go:embed neptune
 var neptune embed.FS
 
 func TestAsteroid(t *testing.T) {
