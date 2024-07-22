@@ -1,12 +1,35 @@
 package gnAsteroid
 
 import (
+	"embed"
+	"io/fs"
 	"log/slog"
 	"testing"
+
+	"github.com/gnolang/gno/gno.land/pkg/gnoweb"
 
 	// "github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+//go:embed neptune
+var neptune embed.FS
+
+func TestAsteroid(t *testing.T) {
+	neptuneFs, _ := fs.Sub(neptune, "neptune")
+
+	// this test makes sure an index.md is readable in the asteroid root
+	if nil == HandleAsteroid(
+		neptuneFs, DefaultStyle(), "neptune as an asteroid",
+		gnoweb.Config{
+			RemoteAddr:  "gno.land:26657",
+			HelpChainID: "portal-loop",
+			HelpRemote:  "gno.land:26657",
+		},
+	) {
+		t.Error("nil handler")
+	}
+}
 
 func TestParseArgs(t *testing.T) {
 	const (

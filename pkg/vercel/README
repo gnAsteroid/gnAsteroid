@@ -1,9 +1,0 @@
-Asteroids can be deployed used on https://vercel.
-
-Both the asteroid and the style need to be embedded,
-and you won't be able to push your files.
-
-Therefore it's a diminished experience.
-
-However for a demo or a purely static website, it can
-be convenient.

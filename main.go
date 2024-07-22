@@ -39,7 +39,6 @@ var newViews embed.FS // composed with gnoweb's, using merged_fs
 //go:embed default-style/*
 var defaultEmbedStyle embed.FS
 
-// these 3 are used by packages such as pkg/vercel
 func SetAsteroidFs(asteroid fs.FS) { asteroidFs = asteroid }
 func SetAsteroidName(name string)  { asteroidName = name }
 func DefaultStyle() fs.FS {
@@ -50,13 +49,25 @@ func DefaultStyle() fs.FS {
 	}
 }
 
+// encapsulate a serverless gnoweb serving an asteroid as an http.Handler
+// It can then be served, for example on Vercel. nil style uses
+// defaultEmbedStyle.
+func HandleAsteroid(asteroid, style fs.FS, asteroidName_ string, cfg gnoweb.Config) http.Handler {
+	SetAsteroidFs(asteroid)
+	SetAsteroidName(asteroidName_)
+	return MakeApp(slog.Default(), cfg, style)
+}
+
 func MakeApp(logger *slog.Logger, cfg gnoweb.Config, styleFs fs.FS) http.Handler {
 	gnowebViews, e := fs.Sub(gnoweb.DefaultViewsFiles(), "views")
 	if e != nil {
 		panic("Could not find gnoweb views: " + e.Error())
 	}
+	if styleFs == nil {
+		styleFs = defaultEmbedStyle
+	}
 	return gnoweb.MakeAppWithOptions(logger, cfg, gnoweb.Options{
-		RootHandler:     HandlerHome,
+		RootHandler:     HandlerRoot,
 		NotFoundHandler: HandlerAnything,
 		StyleFS:         styleFs,
 		ViewFS:          merged_fs.NewMergedFS(gnowebViews, newViews),
@@ -157,8 +168,7 @@ func parseArgs(args []string, logger *slog.Logger) (gnoweb.Config, error) {
 
 // handler serving /
 // it is used when gnoweb needs to serve a root index.md or README.md file.
-// TODO rename HandlerRoot
-func HandlerHome(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.Handler {
+func HandlerRoot(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.Handler {
 	var rootFile fs.File
 	var e error
 	rootFile, e = asteroidFs.Open("index.md")
@@ -166,7 +176,7 @@ func HandlerHome(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.H
 		rootFile, e = asteroidFs.Open("README.md")
 	}
 	if e != nil {
-		panic("asteroid must include /index.md or /README.md")
+		panic("asteroid must include /(index|README).md")
 	}
 	fileInfo, _ := rootFile.Stat()
 	buf := make([]byte, fileInfo.Size())
@@ -198,10 +208,12 @@ func HandlerAnything(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) ht
 		switch {
 		case osm.DirExists(file) && osm.FileExists(file+"/index.md"):
 			file = file + "/index.md"
+		case osm.DirExists(file) && osm.FileExists(file+"/README.md"):
+			file = file + "/README.md"
 		case osm.FileExists(file + ".md"):
 			file = file + ".md"
 		case osm.DirExists(file):
-			http.Error(w, "Teapot: missing index.md", http.StatusTeapot)
+			http.Error(w, "Teapot: missing (index|README).md", http.StatusTeapot)
 			return
 		case osm.FileExists(file):
 		default:
