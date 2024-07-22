@@ -200,59 +200,74 @@ func HandlerRoot(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.H
 // attempt serving markdown, images
 // in the structure.
 func HandlerAnything(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.Handler {
+	// Note: we read from asteroidFs (asteroidDir is not always used)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		url := r.URL.String()
 		url = html.UnescapeString(url)
+		// TODO test it still works (removing leading /) with asteroidDir
+		// We need to remove leading / with embed fs...
+		url = strings.TrimPrefix(url, "/")
 		url = filepath.Clean(url)
-		file := filepath.Join(asteroidDir, url)
-		switch {
-		case osm.DirExists(file) && osm.FileExists(file+"/index.md"):
-			file = file + "/index.md"
-		case osm.DirExists(file) && osm.FileExists(file+"/README.md"):
-			file = file + "/README.md"
-		case osm.FileExists(file + ".md"):
-			file = file + ".md"
-		case osm.DirExists(file):
-			http.Error(w, "Teapot: missing (index|README).md", http.StatusTeapot)
-			return
-		case osm.FileExists(file):
-		default:
-			http.Error(w, "Not Found: "+file, http.StatusNotFound)
-			return
-		}
-		if strings.Contains(file, "..") {
+
+		if strings.Contains(url, "..") {
 			app.NewTemplatingEngine().
 				Set("AsteroidName", asteroidName).
 				Set("Config", cfg).
 				Render(w, r, "views/asteroid403.html", "views/asteroidFuncs.html")
 		}
+		var file fs.File // nil means still unfound
+		servedFilename := ""
+
+		for _, path := range []string{
+			url + "/index.md",
+			url + "/README.md",
+			url,
+		} {
+			x, e := asteroidFs.Open(path)
+			if e == nil {
+				if stat, e := x.Stat(); e == nil && !stat.IsDir() {
+					file = x
+					servedFilename = path
+					break
+				}
+			}
+		}
+		if file == nil {
+			http.Error(w, "Not Found: "+url, http.StatusNotFound)
+			return
+		}
 		// serve based on file extension
 		switch {
-		case strings.HasSuffix(file, ".md"):
-			content := osm.MustReadFile(file)
+		case strings.HasSuffix(servedFilename, ".md"):
+			stat, e := file.Stat()
+			if e != nil {
+				http.Error(w, "can not stat file", http.StatusExpectationFailed)
+				return
+			}
+			content := make([]byte, stat.Size())
+			if _, e := file.Read(content); e != nil {
+				http.Error(w, "can not read file: error", http.StatusExpectationFailed)
+				return
+			}
 			app.NewTemplatingEngine().
 				Set("AsteroidName", asteroidName).
 				Set("MainContent", string(content)).
 				Set("Config", cfg).
 				Render(w, r, "views/asteroidFuncs.html", "views/asteroidGeneric.html")
-		case strings.HasSuffix(file, ".jpg"),
-			strings.HasSuffix(file, ".jpeg"),
-			strings.HasSuffix(file, ".png"),
-			strings.HasSuffix(file, ".gif"):
-			http.ServeFile(w, r, file)
+		case strings.HasSuffix(servedFilename, ".jpg"),
+			strings.HasSuffix(servedFilename, ".jpeg"),
+			strings.HasSuffix(servedFilename, ".png"),
+			strings.HasSuffix(servedFilename, ".gif"):
+			http.ServeFileFS(w, r, asteroidFs, servedFilename)
 		default:
-			if osm.FileExists(file) {
-				w.Write([]byte("Unrecognized extension"))
-			} else {
-				http.Error(w, "Not Found: "+file, http.StatusNotFound)
-			}
+			http.Error(w, "Unrecognized extension", http.StatusExpectationFailed)
 		}
 	})
 }
 
 func StyleFsFrom(styleDir string) fs.FS {
 	if styleDir == "" {
-		return defaultEmbedStyle
+		return DefaultStyle()
 	}
 	return os.DirFS(styleDir)
 }

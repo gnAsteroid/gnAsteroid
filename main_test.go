@@ -18,7 +18,6 @@ var neptune embed.FS
 func TestAsteroid(t *testing.T) {
 	neptuneFs, _ := fs.Sub(neptune, "neptune")
 
-	// this test makes sure an index.md is readable in the asteroid root
 	if nil == HandleAsteroid(
 		neptuneFs, DefaultStyle(), "neptune as an asteroid",
 		gnoweb.Config{
@@ -29,14 +28,16 @@ func TestAsteroid(t *testing.T) {
 	) {
 		t.Error("nil handler")
 	}
+
+	// TODO add serving test
 }
 
 func TestParseArgs(t *testing.T) {
 	const (
-		name       = "Golf November Oscar"
+		name       = "my asteroid"
 		exampleDir = "example"
 		bind       = "57182"
-		styleDir   = "style" // it's a fake style dir, it's not checked here
+		styleDir   = "style" // a fake style dir, it's not checked here
 	)
 	_, e := parseArgs([]string{
 		"-asteroid-dir", exampleDir,
@@ -52,6 +53,12 @@ func TestParseArgs(t *testing.T) {
 	require.Equal(t, asteroidDir, exampleDir)
 	require.Equal(t, bindAddr, bind)
 	require.Equal(t, styleDir, styleDir)
+}
+
+// an asteroid read from -asteroid-dir
+// (the other case is using HandleAsteroid, using embed)
+func TestAsteroidFromDir(t *testing.T) {
+	// TODO add this test
 }
 
 // TODO
