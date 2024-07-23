@@ -64,3 +64,8 @@ More links may arrive soon, e.g.:
 * gnAsteroid.style-gnosmos: a simple style you can use and modify.
 * gnAsteroid.docker: a docker system to serve asteroids (especially on Akash)
 
+## Credits
+
+- [gno.land](https://gno.land)'s gnoweb,
+- [SVG asteroid icon](https://iconduck.com/icons/169509/asteroid) and [SVG asteroid2 icon](https://iconduck.com/icons/169430/asteroid-2) used under the terms of Creative Commons Attribution 4, courtesy of [Agata Kuczmińska](https://iconduck.com/designers/agata-kuczminska). Love her work, will probably use more of the [space icons set](https://iconduck.com/sets/space-icons-set) in the future for asteroids, thanks!
+
