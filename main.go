@@ -257,7 +257,8 @@ func HandlerAnything(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) ht
 		case strings.HasSuffix(servedFilename, ".jpg"),
 			strings.HasSuffix(servedFilename, ".jpeg"),
 			strings.HasSuffix(servedFilename, ".png"),
-			strings.HasSuffix(servedFilename, ".gif"):
+			strings.HasSuffix(servedFilename, ".gif"),
+			strings.HasSuffix(servedFilename, ".svg"):
 			http.ServeFileFS(w, r, asteroidFs, servedFilename)
 		default:
 			http.Error(w, "Unrecognized extension", http.StatusExpectationFailed)
