@@ -52,19 +52,23 @@ pre {
 
 code {
   border-radius: 3px;
-  /* padding: 5px 5px 0 5px; */
   font-size: 1.04em;
   font-size: 0.87em;
   overflow: auto;
 }
 
-pre > code {
-  font-size: 0.9em;
+#package_file pre > code {
+  font-size: 1.02em;
+  line-height: 1.24em;
+  padding: 1em;
 }
 
 /*** PAGE LAYOUT ***/
 
-#root { margin: 20px; }
+#root { 
+  margin: 20px; 
+  max-width: 800px;
+}
 
 #header {
   padding: 22px;
@@ -80,18 +84,18 @@ pre > code {
 
 div#header + div {
   margin-top: 0px;
-  padding-top: 0.5em;
   border-bottom-left-radius: 0.5em;
   border-bottom-right-radius: 0.5em;
 }
 
+/* div#package_file, */
 div#home,
 div#packge_dir,
-div#package_file,
 div#realm_help,
 div#realm_render { 
-  padding: 0 15px 15px 15px;
+  padding: 1px 15px 15px 15px;
 }
+
 
 div#home table { 
   border-collapse: collapse; 
@@ -101,6 +105,25 @@ div#home table {
 div#home table, th, td { 
   border: 1px solid #00000070; 
   padding: 3px;
+}
+
+/* <table /> is one kind of table.
+ * <div class="rounded-table-wrapper"><table /></div> is a second kind.
+ * https://stackoverflow.com/questions/4932181/rounded-table-corners-css-only (@AlexZvl)
+ */
+div#home div.rounded-table-wrapper > table {
+  width: 100%;
+  border-collapse: collapse;
+  border-style: hidden;
+}
+div#home div.rounded-table-wrapper > table, div#home div.rounded-table-wrapper > td, div#home div.rounded-table-wrapper > th {
+  border: 1px solid black;
+  padding: 10px;
+}
+div#home div.rounded-table-wrapper {
+  border: 1px solid black;
+  border-radius: 20px;
+  margin: 10%;
 }
 
 a { text-decoration: none; }
@@ -128,6 +151,8 @@ a { text-decoration: none; }
 }
 #logo_path a:hover { text-decoration: underline; }
 
+a.logonav:hover { border-radius: 1.5px; }
+
 #realm_links { position: relative; padding-left: 0.25em; }
 #realm_links a:hover { text-decoration: underline; }
 
@@ -140,6 +165,7 @@ html #realm_help .func_spec .shell_command {
   /* font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace; */
   font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
   font-weight: normal;
+  font-size: 0.9em;
 }
 
 #realm_help .func_spec > table > tbody > tr > th {
@@ -148,21 +174,40 @@ html #realm_help .func_spec .shell_command {
   text-align: right;
 }
 
-#realm_help .func_spec > table th,
-#realm_help .func_spec > table td {
-  padding-bottom: 16px;
-}
-
-#realm_help .func_spec > table th + td {
-  padding-left: 50px;
-}
-
-#realm_help .func_spec > table th + td table td {
-  padding-left: 12px;
+#realm_help div.func_spec > table {
+/*   background: rgba(255,0,64,10%); */
+  border-collapse: collapse;
 }
 
 #realm_help .func_name td {
   font-weight: bold;
 }
 
+/* the weird case of table within table */
+#realm_help div.func_spec > table table th, #realm_help div.func_spec > table table { margin: 0; }
+#realm_help div.func_spec > table table th, #realm_help div.func_spec > table table td { padding-left: 0; padding-top: 0; padding-bottom: 0; }
+#realm_help div.func_spec > table table th, #realm_help div.func_spec > table table td { border: none; }
+
+/* #realm_help div.func_spec > table th, #realm_help div.func_spec > table td { */
+/*   padding: 10px; */
+/* } */
+
 h1 { font-size: 1.618em; line-height: 1.25em; }
+
+
+/* responsive - small screen. just don't show the box */
+@media (max-width: 800px), (max-height: 320px) {
+  #root { margin:0; }
+  #header {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+  div#header + div {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+@media (max-width: 400px) {
+  #header_buttons { visibility: hidden; }
+}

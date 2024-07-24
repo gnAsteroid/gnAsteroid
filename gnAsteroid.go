@@ -62,6 +62,10 @@ func MakeApp(logger *slog.Logger, cfg gnoweb.Config, styleFs fs.FS) http.Handler
 	if e != nil {
 		panic("Could not find gnoweb views: " + e.Error())
 	}
+	asteroidViews, e := fs.Sub(newViews, "views")
+	if e != nil {
+		panic("Could not find asteroid views: " + e.Error())
+	}
 	if styleFs == nil {
 		styleFs = defaultEmbedStyle
 	}
@@ -69,7 +73,8 @@ func MakeApp(logger *slog.Logger, cfg gnoweb.Config, styleFs fs.FS) http.Handler
 		RootHandler:     HandlerRoot,
 		NotFoundHandler: HandlerAnything,
 		StyleFS:         styleFs,
-		ViewFS:          merged_fs.NewMergedFS(gnowebViews, newViews),
+		// ViewFS:          merged_fs.NewMergedFS(gnowebViews, asteroidViews),
+		ViewFS: merged_fs.NewMergedFS(asteroidViews, gnowebViews),
 	}).Router
 }
 
@@ -99,7 +104,7 @@ func HandlerRoot(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.H
 			Set("AsteroidName", asteroidName).
 			Set("HomeContent", string(homeContent)).
 			Set("Config", cfg).
-			Render(w, r, "views/asteroidHome.html", "views/asteroidFuncs.html")
+			Render(w, r, "asteroidHome.html", "funcs.html")
 	})
 }
 
@@ -117,7 +122,7 @@ func HandlerAnything(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) ht
 			app.NewTemplatingEngine().
 				Set("AsteroidName", asteroidName).
 				Set("Config", cfg).
-				Render(w, r, "views/asteroid403.html", "views/asteroidFuncs.html")
+				Render(w, r, "asteroid403.html", "funcs.html")
 		}
 		var file fs.File // nil means still unfound
 		servedFilename := ""
@@ -157,7 +162,7 @@ func HandlerAnything(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) ht
 				Set("AsteroidName", asteroidName).
 				Set("MainContent", string(content)).
 				Set("Config", cfg).
-				Render(w, r, "views/asteroidFuncs.html", "views/asteroidGeneric.html")
+				Render(w, r, "funcs.html", "asteroidGeneric.html")
 		case strings.HasSuffix(servedFilename, ".jpg"),
 			strings.HasSuffix(servedFilename, ".jpeg"),
 			strings.HasSuffix(servedFilename, ".png"),

@@ -3,3 +3,9 @@ to the views in gnoweb's embedFS,
 not independently.
 
 They are composed using a merged_fs.
+
+This is quite dirty, better would be 
+to make gnoweb views just a little bit
+more adaptable. This way we could get
+rid of this folder altogether. But it's 
+still TODO

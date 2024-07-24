@@ -51,11 +51,12 @@ within the binary, is used.
 
 # TODO
 
-- [ ] publish realm to register asteroid belts
-- [ ] query asteroid belts to show links
-- [ ] some kind of publication system
-- [ ] better `<table>` styling
-- [ ] investigate: web browser + gnoweb don't re-load css correctly at the moment
+- [ ] realm to register, link and share asteroids (belts?)
+- [ ] publishing
+- [x] better `<table>` styling
+- [ ] typography of the `<h1>-<h5>` titles (serif, sans?)
+- [ ] converge gnoweb's views so this can remove ./views/
+- [ ] ?help view for realms must use the value specified w/ -help-remote (and if not, -chainid must use -help-chainid)
 
 # More 
 

@@ -48,6 +48,7 @@ hr {
 
 pre {
    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+   font-family: "Roboto Mono", "Courier New", "sans-serif";
    font-weight: normal;
    font-size: 1em;
 }
@@ -90,6 +91,7 @@ code,
 kbd,
 samp {
     font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+    font-family: "Roboto Mono", "Courier New", "sans-serif";
     font-weight: normal;
     font-size: 1em;
 }

@@ -69,16 +69,24 @@ html[data-theme="dark"] #realm_help .func_spec:nth-child(odd) { background: #454
 html[data-theme="dark"] #realm_help .func_spec .shell_command { color: #b6b6b6; }
 html[data-theme="dark"] #realm_help .func_spec > table > tbody > tr > th { color: #eee; }
 
-html[data-theme="dark"] pre { background-color: #252545; }
-html[data-theme="dark"] code {
-  background-color: #252545;
-  color: #a87ab6;
-  /* font-size: 0.87em; */
-  font-size: 1.02em;
-  text-shadow: black 1px 1px;
-}
+
+/* ```<code>``` */
 html[data-theme="dark"] pre > code {
   background-color: #252545;
+  display: block;
   color: #858ed7;
+  padding: 2em;
+  text-shadow: black 1px 1px;
+  line-height: 1em;
+}
+
+html[data-theme="dark"] pre { background-color: #252545; }
+
+/* `word`: <code> tags inside <pre> that are not immediate children */
+html[data-theme="dark"] code:not(pre > code) {
+  /* border: 1px #ccc dashed; */ 
+  padding: 1px 0.382em;
+  color: #a87ab6;
+  background-color: #252545;
   text-shadow: black 1px 1px;
 }
