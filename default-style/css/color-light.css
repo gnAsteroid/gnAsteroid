@@ -62,7 +62,7 @@ html[data-theme="light"] pre > code {
   background-color: lightgrey;
   display: block;
   padding: 2em;
-  line-height: 1em;
+  line-height: 1.5em;
 }
 
 /* `word`: <code> tags inside <pre> that are not immediate children */

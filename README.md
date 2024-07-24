@@ -1,55 +1,70 @@
-Asteroids are simple websites or personal wikis that can interact with the Realms on the [GNO blockchain](https://github.com/gnolang/gno). 
+Asteroids are simple websites or personal wikis that can interact with the Realms on [gno.land](https://gno.land) blockchain. **You do not need** to be a technician to create an asteroid. However the installation requires to use `git` and `go` for now.
 
-You can use it to setup personal blogs, organisation websites, presenting newly discovered gems in the gnoland or just as experimental playgrounds. Imagine a wiki structure using markdown that can also render smart contracts (realms) from the https://gno.land blockchain, with redactional and stylistic autonomy.
+## Build the gnAsteroid executable
 
-gnAsteroid is built on the [gnoweb package](https://github.com/gnolang/gno/tree/master/gno.land/pkg/gnoweb) from [gno.land](https://gno.land). It doesn't intend to compete with it, since it's plugged onto the same realms but asteroids are made to gravitate around gno.land using the same idea.
+1. clone gnAsteroid: `git clone https://github.com/gno/gnAsteroid`
+2. **Compile** with `go build -C cmd/ -o gnAsteroid`,
+3. **Run** with `cmd/gnAsteroid -asteroid-dir=example`, 
+4. **Visit** the example with a browser at http://localhost:8888.
 
-When files in an asteroid are modified, they are automatically refreshed on the server.
+## Create a GNO asteroid
 
-# Minimal example
+Now our gnAsteroid command is compiled, we will create
+an asteroid called "bob".
 
-* **Compile** using `go build -o gnAsteroid` (or `make`)
-* **Run** with `./gnAsteroid -asteroid-dir=example`, 
-* **Visit** with a browser.
+To create an asteroid "bob", we create a directory `bob`, 
+with simply these 2 files inside:
 
-# To create a GNO asteroid
+**bob/index.md**
+```md
+Hello the Gnosmos! This is [Bob](about.md)'s blog :)
 
-1. install gnAsteroid: `git clone https://github.com/gno/gnAsteroid`
-2. Create an asteroid, let's say we're bob:
-
-```
-mkdir -p ~/asteroids/bob/
-cd ~/asteroids
-echo "Hello the Gnosmos! This is [Bob](about)'s blog :)" > bob/index.md
-echo "I'm Bob from Neptune. In a previous life I was a sumo." > bob/about.md
+Take a look at my [gnoface](/r/demo/art/gnoface:1337).
 ```
 
-That's it, we've created an asteroid with 2 pages.
+**bob/about.md**
+```md
+I'm Bob from Neptune. In a previous life I was a sumo.
+```
+
+And that's it, we've created an asteroid with 2 pages.
 Launch essentially like before:
-```bash
-gnAsteroid \
-    -bind 127.0.0.1:8888 \
-    -asteroid-name "Bob's asteroid" \
-    -asteroid-dir ~/asteroids/bob
-```
-Test by visiting [http://127.0.0.1:8888](http://127.0.0.1:8888).
 
-Tip: instead of specifying the name, you may type it in a file `.TITLE` at the root of your asteroid.
+`gnAsteroid -asteroid-name "Bob's asteroid" -asteroid-dir bob`
 
-# Styling an asteroid?
+And pay a visit to your machine's local TCP port 8888, that is http://localhost:8888.
+
+<img src=svg/colored-outlined/telescope.svg hspace=10 width=100 align=left />
+
+**Quiz**: if you noticed, this asteroid can render not only
+`about.md` and `index.md` but a third page, namely a realm 
+`/r/demo/art/gnoface:1337` hosted and run by validators on the gno.land chain but 
+shown on your asteroid. Can you guess what the `:1337` is and what it does? 
+
+(**tip**: Using the asteroid, you can take a look at its source code on-chain. **tip 2**: If
+you're too lazy to run your asteroid but want to [see it...](http://gno.land/r/demo/art/gnoface:1337)).
+
+## Naming an asteroid
+
+instead of specifying the name with `-asteroid-name <name>`, you may set it 
+once and for all in a hidden file `.TITLE` at the root of your asteroid.
+
+Just enter a one line name.
+
+## Styling an asteroid
 
 Asteroids are very rough rocks.
 
 In the context of asteroids, we call **style** a set 
-of 3 folders: `css`, `font` and `img`. You may fork and
-modify the style at [grepsuzette/gnAsteroid.style-gnosmos](https://github.com/grepsuzette/gnAsteroid.style-gnosmos).
+of 3 folders: `css`, `font` and `img`. 
 
-Then `gnAsteroid -style-dir=/path/to/your/style -asteroid-dir=example`
+<img src=svg/colored-outlined/darth-vader.svg hspace=10 width=100 align=left />
 
-When no style is specified, a default style, embedded 
-within the binary, is used.
+You may fork and modify the style in `default-style/`.  Then `gnAsteroid -style-dir=/path/to/your/style -asteroid-dir=example`
 
-# TODO
+Asteroids css are not standardized yet. Don't hesitate to just fork and experiment for now (and contribute).  When no style is specified, a default style, embedded within the binary, is used.
+
+## TODO
 
 - [ ] realm to register, link and share asteroids (belts?)
 - [ ] publishing
@@ -58,7 +73,7 @@ within the binary, is used.
 - [ ] converge gnoweb's views so this can remove ./views/
 - [ ] ?help view for realms must use the value specified w/ -help-remote (and if not, -chainid must use -help-chainid)
 
-# More 
+## More 
 
 More links may arrive soon, e.g.:
 
@@ -67,6 +82,5 @@ More links may arrive soon, e.g.:
 
 ## Credits
 
-- [gno.land](https://gno.land)'s gnoweb,
-- [SVG asteroid icon](https://iconduck.com/icons/169509/asteroid) and [SVG asteroid2 icon](https://iconduck.com/icons/169430/asteroid-2) used under the terms of Creative Commons Attribution 4, courtesy of [Agata Kuczmińska](https://iconduck.com/designers/agata-kuczminska). Love her work, will probably use more of the [space icons set](https://iconduck.com/sets/space-icons-set) in the future for asteroids, thanks!
-
+- [Gno.land](https://gno.land)'s gnoweb, the GNO chain, GNO VM, thanks to all the team!
+- [Space Icons Set](https://iconduck.com/sets/space-icons-set) under the terms of Creative Commons Attribution 4, courtesy of [Agata Kuczmińska](https://iconduck.com/designers/agata-kuczminska). Amazing work she's done, thanks!
