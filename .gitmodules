@@ -1,0 +1,3 @@
+[submodule "default-style"]
+	path = default-style
+	url = https://github.com/grepsuzette/gnAsteroid.style-gnosmos

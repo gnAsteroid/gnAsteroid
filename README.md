@@ -8,7 +8,7 @@ Note: *You do not need* to be a technician to create an asteroid. However the fi
 
 <img src=svg/colored-outlined/space-rover-2.svg width=100 align=left style="padding-right: 25px;" />
 
-1. clone gnAsteroid: `git clone https://github.com/gno/gnAsteroid`
+1. clone gnAsteroid: `git clone --recurse-submodules https://github.com/gno/gnAsteroid`
 2. **Compile** with `go build -C cmd/ -o gnAsteroid`,
 3. **Run** with `cmd/gnAsteroid -asteroid-dir=example`, 
 4. **Visit** the example with a browser at http://localhost:8888.
