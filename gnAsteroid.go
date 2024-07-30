@@ -32,7 +32,7 @@ var (
 //go:embed views/*.html
 var newViews embed.FS // composed with gnoweb's, using merged_fs
 
-//go:embed default-style/*
+//go:embed default-style
 var defaultEmbedStyle embed.FS
 
 func SetAsteroidFs(asteroid fs.FS) { asteroidFs = asteroid }
