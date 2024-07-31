@@ -18,11 +18,11 @@ The roadmap is:
 
 ### Overview
 
-| Host                | monthly cost  | easiness: techie    | easiness: non-technie    | rsync     |
-| --------------      | ------------- | ------------------- | ------------------------ | --------- |
-| [VPS](vps.md)       | 1-5$          | ★★★★★               | ★★★☆☆[^2]                | ✓         |
-| [Vercel](vercel.md) | free          | ★★★★☆               | ★★☆☆☆                    | ✗[^3]     |
-| [Akash](akash.md)   | 0.5-2$        | ★★☆☆☆               | ★☆☆☆☆                    | TBD       |
+| Host                | easiness: techie    | easiness: non-technie    | rsync     |
+| --------------      | ------------------- | ------------------------ | --------- |
+| [VPS](vps.md)       | ★★★★★               | ★★★☆☆[^2]                | ✓         |
+| [Vercel](vercel.md) | ★★★★☆               | ★★☆☆☆                    | ✗[^3]     |
+| [Akash](akash.md)   | ★★☆☆☆               | ★☆☆☆☆                    | TBD       |
 
 It seems certainly possible to publish on DigitalOcean, AWS or Netlify but no one has done it yet (feel free to [propose an HOWTO](https://github.com/grepsuzette/gnAsteroid/wiki)). So this list is to expand.
 

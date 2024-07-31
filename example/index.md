@@ -8,9 +8,11 @@ A small demo for gnAsteroid:
 
 ### Smart contract rendering
 
-<img src="svg/colored-outlined/earth.svg" align="left" hspace="10" width="64" /> Smart contracts (realms) on the https://gno.land blockchain can directly be rendered on this asteroid thanks to [gnoweb](https://github.com/gnolang/gno/gno.land/cmd/gnoweb):
+<img src="svg/colored-outlined/earth.svg" align="left" hspace="10" width="40" /> Smart contracts (realms) on the https://gno.land blockchain can directly be rendered on this asteroid thanks to [gnoweb](https://github.com/gnolang/gno/gno.land/cmd/gnoweb):
 
-> [markdown link](/r/demo/art/gnoface) ([sourcecode](/r/demo/art/gnoface/gnoface_test.gno))
+> Show a [random gnoface](/r/demo/art/gnoface) ([sourcecode](/r/demo/art/gnoface/gnoface_test.gno))
 
-The above link was merely declared as `[markdown link](/r/demo/art/gnoface) ([sourcecode](/r/demo/art/gnoface/gnoface_test.gno))`.
+The above was produced by the following text: `[random gnoface](/r/demo/art/gnoface)`.
+
+
 
