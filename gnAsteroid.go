@@ -11,6 +11,7 @@ import (
 
 	"github.com/gnolang/gno/gno.land/pkg/gnoweb"
 	"github.com/gotuna/gotuna"
+	gnosmos "github.com/grepsuzette/gnosmos.style"
 	"github.com/yalue/merged_fs"
 )
 
@@ -32,22 +33,14 @@ var (
 //go:embed views/*.html
 var newViews embed.FS // composed with gnoweb's, using merged_fs
 
-//go:embed default-style
-var defaultEmbedStyle embed.FS
-
 func SetAsteroidFs(asteroid fs.FS) { asteroidFs = asteroid }
 func SetAsteroidName(name string)  { asteroidName = name }
 func DefaultStyle() fs.FS {
-	if x, e := fs.Sub(defaultEmbedStyle, "default-style"); e == nil {
-		return x
-	} else {
-		panic("bad go:embed? " + e.Error())
-	}
+	return gnosmos.Style
 }
 
 // Encapsulate a serverless gnoweb serving an asteroid as an http.Handler
-// It can then be served, for example on Vercel. nil style uses
-// defaultEmbedStyle.
+// It can then be served, for example on Vercel. nil style uses gnosmos.Style
 func HandleAsteroid(asteroid, style fs.FS, asteroidName_ string, cfg gnoweb.Config) http.Handler {
 	SetAsteroidFs(asteroid)
 	SetAsteroidName(asteroidName_)
@@ -67,14 +60,13 @@ func MakeApp(logger *slog.Logger, cfg gnoweb.Config, styleFs fs.FS) http.Handler
 		panic("Could not find asteroid views: " + e.Error())
 	}
 	if styleFs == nil {
-		styleFs = defaultEmbedStyle
+		styleFs = gnosmos.Style
 	}
 	return gnoweb.MakeAppWithOptions(logger, cfg, gnoweb.Options{
 		RootHandler:     HandlerRoot,
 		NotFoundHandler: HandlerAnything,
 		StyleFS:         styleFs,
-		// ViewFS:          merged_fs.NewMergedFS(gnowebViews, asteroidViews),
-		ViewFS: merged_fs.NewMergedFS(asteroidViews, gnowebViews),
+		ViewFS:          merged_fs.NewMergedFS(asteroidViews, gnowebViews),
 	}).Router
 }
 

@@ -1,14 +1,11 @@
 module github.com/grepsuzette/gnAsteroid
 
-go 1.22
-
-toolchain go1.22.3
+go 1.22.3
 
 require (
 	github.com/dietsche/rfsnotify v0.0.0-20200716145600-b37be6e4177f
 	github.com/gnolang/gno v0.1.0-nightly.20240523.0.20240531193303-edb321f85bef
 	github.com/gotuna/gotuna v0.6.0
-	github.com/grepsuzette/gnAsteroid.style-gnosmos v0.0.0-20240730091850-07ce1398d1c7
 	go.uber.org/zap v1.27.0
 	gopkg.in/fsnotify.v1 v1.4.7
 )
@@ -30,6 +27,7 @@ require (
 	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/gorilla/sessions v1.2.1 // indirect
 	github.com/gorilla/websocket v1.5.1 // indirect
+	github.com/grepsuzette/gnosmos.style v0.0.0-20240801075825-8e425cad0a84 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.20.0 // indirect
 	github.com/libp2p/go-buffer-pool v0.1.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
