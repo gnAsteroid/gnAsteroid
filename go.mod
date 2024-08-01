@@ -8,6 +8,7 @@ require (
 	github.com/dietsche/rfsnotify v0.0.0-20200716145600-b37be6e4177f
 	github.com/gnolang/gno v0.1.0-nightly.20240523.0.20240531193303-edb321f85bef
 	github.com/gotuna/gotuna v0.6.0
+	github.com/grepsuzette/gnAsteroid.style-gnosmos v0.0.0-20240730091850-07ce1398d1c7
 	go.uber.org/zap v1.27.0
 	gopkg.in/fsnotify.v1 v1.4.7
 )
