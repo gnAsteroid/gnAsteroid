@@ -3,9 +3,24 @@
 <html>
   <head>
     <title>{{ .Data.AsteroidName }}</title>
+    <script src="https://unpkg.com/stackedit-js@1.0.7/docs/lib/stackedit.min.js"></script>
     {{ template "html_head" }}
+
   </head>
   <body onload="main()">
+    <script>
+        window.onload = function() { 
+          // because we override onload
+          main();
+          // the rest
+          console.log("pouf");
+            stackedit = new Stackedit();
+            stackedit.on('fileChange', (file) => {
+                el.value = file.content.text;
+            });
+        };
+    </script>
+    <button onclick="stackedit.openFile({name: 'home', content: document.getElementById('home').innerHTML})">Edit</button>
     <div id="root">
       <div id="header">
         {{ template "header_logo" . }}

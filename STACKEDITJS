@@ -1,0 +1,23 @@
+this branch was a POC to use stackeditjs,
+
+so on our example/ home page,
+
+the view template added a [edit] button
+    <button 
+        onclick="stackedit.openFile({
+            name: 'home', 
+            content: document.getElementById('home').innerHTML
+        })">Edit</button>
+
+But POC does not work because of Firefox error:
+
+Request to access cookie or storage on
+“https://stackedit.io/app#origin=http%3A%2F%2F127.0.0.1%3A8888&fileName=home&contentText=&contentProperties=&silent=”
+was blocked because we are blocking all third-party storage access requests and
+content blocking is enabled.
+
+See https://developer.mozilla.org/en-US/docs/Web/Privacy/Storage_Access_Policy/Errors/CookieBlockedForeign
+
+Since the page uses an iframe to a 3rd party i/o showing
+side to side markdown/rendered text, i figure this POC
+is NOT WHAT WE WANT anyway. -> trash ∎
