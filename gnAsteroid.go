@@ -15,19 +15,15 @@ import (
 	"github.com/yalue/merged_fs"
 )
 
-// Instead of serving a realm-based editorial blog
-// about gno.land, this uses gnoweb to serve markdown
-// based websites with customizable style. The other
-// features offered by gnoweb (rendering r/demo/foo)
-// otherwise remain.
-//
-// In other words, website thus create still gravitate
-// around the gno.land chain (hence, "asteroids", if
-// gno.land is a plane(t)).
+// Asteroids gravitate around gno.land
+
+// Instead of serving /r/gnoland/blog like gno.land itself,
+// gnAsteroid uses gnoweb to serve markdown-based websites.
+// The features remain otherwise identical
 
 var (
 	asteroidName string // read from cmdLine, or file called .TITLE at root, or "CHANGEME"
-	asteroidFs   fs.FS  // ultimately used by HandlerHome and HandlerAnything
+	asteroidFs   fs.FS  // used by HandlerHome and HandlerAnything. This is the main difference with gno.land
 )
 
 //go:embed views/*.html
@@ -39,17 +35,18 @@ func DefaultStyle() fs.FS {
 	return gnosmos.Style
 }
 
-// Encapsulate a serverless gnoweb serving an asteroid as an http.Handler
-// It can then be served, for example on Vercel. nil style uses gnosmos.Style
+// HandleAsteroid can be used to have a serverless gnoweb serving an asteroid as a handler.
+// This can be used for example on Vercel.
+// @param (asteroid) the fs to serve (normally a tree with some markdown documents)
+// @param (style) if nil, DefaultStyle() will be used
 func HandleAsteroid(asteroid, style fs.FS, asteroidName_ string, cfg gnoweb.Config) http.Handler {
 	SetAsteroidFs(asteroid)
 	SetAsteroidName(asteroidName_)
 	return MakeApp(slog.Default(), cfg, style)
 }
 
-// And this is separate from HandleAsteroid because?...
-// ...mainly because cmd/main uses MakeApp() to reload
-// watched files.
+// MakeApp is separated from HandleAsteroid, mainly because
+// cmd/main uses MakeApp() to reload watched files.
 func MakeApp(logger *slog.Logger, cfg gnoweb.Config, styleFs fs.FS) http.Handler {
 	gnowebViews, e := fs.Sub(gnoweb.DefaultViewsFiles(), "views")
 	if e != nil {
@@ -70,8 +67,7 @@ func MakeApp(logger *slog.Logger, cfg gnoweb.Config, styleFs fs.FS) http.Handler
 	}).Router
 }
 
-// handler serving /
-// it is used when gnoweb needs to serve a root index.md or README.md file.
+// HandlerRoot is used when gnoweb needs to serve a root "index.md" or "README.md" file.
 func HandlerRoot(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.Handler {
 	var rootFile fs.File
 	var e error
@@ -100,14 +96,12 @@ func HandlerRoot(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.H
 	})
 }
 
-// this is a fallthrough handler to
-// attempt serving markdown, images
-// in the structure.
+// HandlerAnything is a fallthrough handler to attempt serving markdown or images
 func HandlerAnything(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		url := r.URL.String()
 		url = html.UnescapeString(url)
-		url = strings.TrimPrefix(url, "/") // need to remove leading / with embed fs
+		url = strings.TrimPrefix(url, "/") // with embedfs, need to remove the leading /
 		url = filepath.Clean(url)
 
 		if strings.Contains(url, "..") {
@@ -116,7 +110,7 @@ func HandlerAnything(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) ht
 				Set("Config", cfg).
 				Render(w, r, "asteroid403.html", "funcs.html")
 		}
-		var file fs.File // nil means still unfound
+		var file fs.File // when nil, means still not found
 		servedFilename := ""
 
 		for _, path := range []string{
