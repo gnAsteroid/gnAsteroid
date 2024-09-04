@@ -19,11 +19,15 @@ import (
 
 // Instead of serving /r/gnoland/blog like gno.land itself,
 // gnAsteroid uses gnoweb to serve markdown-based websites.
-// The features remain otherwise identical
+// The features remain otherwise identical.
+//
+// Later down the road, gnAsteroid can probably also map to
+// realm-based wiki to have a local system of files that can
+// be saved to the blockchain.
 
 var (
 	asteroidName string // read from cmdLine, or file called .TITLE at root, or "CHANGEME"
-	asteroidFs   fs.FS  // used by HandlerHome and HandlerAnything. This is the main difference with gno.land
+	asteroidFs   fs.FS  // used by HandleRootAsMdFile and HandleNotFoundAsFile. This is the main difference with gno.land
 )
 
 //go:embed views/*.html
@@ -46,7 +50,7 @@ func HandleAsteroid(asteroid, style fs.FS, asteroidName_ string, cfg gnoweb.Conf
 }
 
 // MakeApp is separated from HandleAsteroid, mainly because
-// cmd/main uses MakeApp() to reload watched files.
+// cmd/main uses MakeApp(), to reload watched files.
 func MakeApp(logger *slog.Logger, cfg gnoweb.Config, styleFs fs.FS) http.Handler {
 	gnowebViews, e := fs.Sub(gnoweb.DefaultViewsFiles(), "views")
 	if e != nil {
@@ -60,15 +64,15 @@ func MakeApp(logger *slog.Logger, cfg gnoweb.Config, styleFs fs.FS) http.Handler
 		styleFs = gnosmos.Style
 	}
 	return gnoweb.MakeAppWithOptions(logger, cfg, gnoweb.Options{
-		RootHandler:     HandlerRoot,
-		NotFoundHandler: HandlerAnything,
+		RootHandler:     HandleRootAsMdFile,
+		NotFoundHandler: HandleNotFoundAsFile,
 		StyleFS:         styleFs,
 		ViewFS:          merged_fs.NewMergedFS(asteroidViews, gnowebViews),
 	}).Router
 }
 
-// HandlerRoot is used when gnoweb needs to serve a root "index.md" or "README.md" file.
-func HandlerRoot(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.Handler {
+// This RootHandler has gnoweb serve a file called "index.md" or "README.md" when root is requested
+func HandleRootAsMdFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.Handler {
 	var rootFile fs.File
 	var e error
 	rootFile, e = asteroidFs.Open("index.md")
@@ -96,8 +100,8 @@ func HandlerRoot(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.H
 	})
 }
 
-// HandlerAnything is a fallthrough handler to attempt serving markdown or images
-func HandlerAnything(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.Handler {
+// HandleNotFoundAsFile is a fallthrough handler to attempt serving markdown or images
+func HandleNotFoundAsFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		url := r.URL.String()
 		url = html.UnescapeString(url)
