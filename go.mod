@@ -13,7 +13,8 @@ require (
 	gopkg.in/fsnotify.v1 v1.4.7
 )
 
-replace github.com/gnolang/gno => /me/gno
+// replace github.com/gnolang/gno => /me/gno
+replace github.com/gnolang/gno => github.com/grepsuzette/gno v0.0.1
 
 require (
 	github.com/btcsuite/btcd/btcec/v2 v2.3.4 // indirect
