@@ -98,11 +98,11 @@ func parseArgs(args []string, logger *slog.Logger) (gnoweb.Config, error) {
 	flag.StringVar(&styleDir, "style-dir", "", "style directory (css, js, img). Default is '', meaning \"use embed 'default-style/'\"")
 	flag.StringVar(&bindAddr, "bind", "0.0.0.0:8888", "server listening address")
 	// gnoweb flags
-	flag.StringVar(&cfg.RemoteAddr, "remote", "https//rpc.gno.land:443", "remote gnoland node address")
+	flag.StringVar(&cfg.RemoteAddr, "remote", "https://rpc.gno.land:443", "remote gnoland node address")
 	flag.StringVar(&cfg.CaptchaSite, "captcha-site", "", "recaptcha site key (if empty, captcha are disabled)")
 	flag.StringVar(&cfg.FaucetURL, "faucet-url", "http://localhost:5050", "faucet server URL")
 	flag.StringVar(&cfg.HelpChainID, "help-chainid", "dev", "help page's chainid")
-	flag.StringVar(&cfg.HelpRemote, "help-remote", "https//gno.land:443", "help page's remote addr")
+	flag.StringVar(&cfg.HelpRemote, "help-remote", "https://gno.land:443", "help page's remote addr")
 	flag.BoolVar(&cfg.WithAnalytics, "with-analytics", cfg.WithAnalytics, "enable privacy-first analytics")
 	// let's parse cli
 	if parseError := flag.Parse(args); parseError != nil {
