@@ -90,6 +90,8 @@ github.com/gorilla/websocket v1.5.3 h1:saDtZ6Pbx/0u+bgYQ3q96pZgCzfhKXGPqt7kZ72aN
 github.com/gorilla/websocket v1.5.3/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/gotuna/gotuna v0.6.0 h1:N1lQKXEi/lwRp8u3sccTYLhzOffA4QasExz/1M5Riws=
 github.com/gotuna/gotuna v0.6.0/go.mod h1:F/ecRt29ChB6Ycy1AFIBpBiMNK0j7Heq+gFbLWquhjc=
+github.com/grepsuzette/gno v0.0.1 h1:JS594lTnWTgHY3iuMXhNwpgM+JHri9rQy/5ZgZNSXpU=
+github.com/grepsuzette/gno v0.0.1/go.mod h1:dBaL1Au2MNLol+3FXdCv+IKLJnMKtTmIt778zsKjVu0=
 github.com/grepsuzette/gnosmos.style v0.0.0-20240801075825-8e425cad0a84 h1:nnnmIUMn8wCORqCQUvIQagsr+akP5MZ9j4FK8/AP/p0=
 github.com/grepsuzette/gnosmos.style v0.0.0-20240801075825-8e425cad0a84/go.mod h1:mwI0PkYm6mhivBktw0paWgGI3oRh3SZsf0bKb5m8lIA=
 github.com/grpc-ecosystem/grpc-gateway/v2 v2.20.0 h1:bkypFPDjIYGfCYD5mRBvpqxfYX1YCS1PXdKYWi8FsN0=

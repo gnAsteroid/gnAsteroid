@@ -19,7 +19,6 @@ import (
 	osm "github.com/gnolang/gno/tm2/pkg/os"
 	"github.com/grepsuzette/gnAsteroid"
 	"go.uber.org/zap/zapcore"
-	"gopkg.in/fsnotify.v1"
 )
 
 var bindAddr string
@@ -66,10 +65,7 @@ func main() {
 			for {
 				select {
 				case event, ok := <-watcher.Events:
-					if !ok {
-						return
-					}
-					if event.Op&fsnotify.Write == fsnotify.Write {
+					if ok {
 						logger.Info("Reloading, modified: " + event.Name)
 						server.Handler = gnAsteroid.MakeApp(logger, cfg, styleFs)
 					}
