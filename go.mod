@@ -1,12 +1,12 @@
-module github.com/grepsuzette/gnAsteroid
+module github.com/gnAsteroid/gnAsteroid
 
 go 1.22.3
 
 require (
 	github.com/dietsche/rfsnotify v0.0.0-20200716145600-b37be6e4177f
+	github.com/gnAsteroid/gnosmos.style v0.0.0-20240801075825-8e425cad0a84
 	github.com/gnolang/gno v0.1.0-nightly.20240523.0.20240531193303-edb321f85bef
 	github.com/gotuna/gotuna v0.6.0
-	github.com/grepsuzette/gnosmos.style v0.0.0-20240801075825-8e425cad0a84
 	github.com/stretchr/testify v1.9.0
 	github.com/yalue/merged_fs v1.3.0
 	go.uber.org/zap v1.27.0

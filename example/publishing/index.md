@@ -24,7 +24,7 @@ The roadmap is:
 | [Vercel](vercel.md) | ★★★★☆               | ★★☆☆☆                    | ✗[^3]     |
 | [Akash](akash.md)   | ★★☆☆☆               | ★☆☆☆☆                    | TBD       |
 
-It seems certainly possible to publish on DigitalOcean, AWS or Netlify but no one has done it yet (feel free to [propose an HOWTO](https://github.com/grepsuzette/gnAsteroid/wiki)). So this list is to expand.
+It seems certainly possible to publish on DigitalOcean, AWS or Netlify but no one has done it yet (feel free to [propose an HOWTO](https://github.com/gnAsteroid/gnAsteroid/wiki)). So this list is to expand.
 
 
 *Footnotes*:

@@ -9,9 +9,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	gnosmos "github.com/gnAsteroid/gnosmos.style"
 	"github.com/gnolang/gno/gno.land/pkg/gnoweb"
 	"github.com/gotuna/gotuna"
-	gnosmos "github.com/grepsuzette/gnosmos.style"
 	"github.com/yalue/merged_fs"
 )
 
