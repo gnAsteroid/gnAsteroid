@@ -73,7 +73,7 @@ once in a hidden file `.TITLE` at the root of your asteroid. For example, *Preci
 
 Asteroids are very rough rocks.
 
-In the context of asteroids, we call **style** a set 
+In the context of asteroids, we call **theme** a set 
 of 3 folders: `css`, `font` and `img`. 
 
 <style type="text/css">
@@ -83,9 +83,9 @@ img#really:hover {
 </style>
 <img id=really title="Damn, Han Solo!" src=svg/colored-outlined/darth-vader.svg hspace=10 width=100 align=left />
 
-You may fork and modify the style in `default-style/`.  Then launch something like `gnAsteroid.exe -style-dir=/path/to/your/style -asteroid-dir=example`
+You may fork and modify the theme in `default-theme/`.  Then launch something like `gnAsteroid.exe -theme-dir=/path/to/your/theme -asteroid-dir=example`
 
-Asteroids css are not standardized yet. Don't hesitate to just fork and experiment for now (and contribute).  When no style is specified, a default style, embedded within the executable, is used.
+Asteroids css are not standardized yet. Don't hesitate to just fork and experiment for now (and contribute).  When no theme is specified, content will be rendered on an essentially blank page.
 
 ## Publishing
 
@@ -106,7 +106,6 @@ This is a work in progress, but [here's what works](publishing/) for now.
 
 More links may arrive soon, e.g.:
 
-* gnAsteroid.style-gnosmos: a simple style you can use and modify.
 * [gnAsteroid.docker](https://github.com/gnAsteroid/gnAsteroid.docker): a Dockerfile to help serve asteroids (especially on [Akash](https://console.akash.network))
 
 ## Credits

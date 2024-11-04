@@ -1,0 +1,143 @@
+
+html:not([data-theme="dark"]),
+html[data-theme="light"] {
+  --highlight-color: #ffffff;
+  --highlight-bg: #1c1b1b;
+  --highlight-color: #ffffff;
+  --highlight-comment: #999999;
+  --highlight-keyword: #88aece;
+  --highlight-attribute: #88aece;
+  --highlight-symbol: #c59bc1;
+  --highlight-namespace: #fd6597;
+  --highlight-keyword: #88aece;
+  --highlight-variable: #b7ac96;
+  --highlight-keyword: #37bca3;
+  --highlight-literal: #f08d49;
+  --highlight-punctuation: #cccccc;
+  --highlight-variable: #bb7b62;
+  --highlight-variable: #bd8e63;
+  --highlight-deletion: #de7176;
+  --highlight-addition: #76c490;
+}
+
+html[data-theme="dark"] {
+  --highlight-color: #ffffff;
+  --highlight-bg: #1c1b1b;
+  --highlight-color: #ffffff;
+  --highlight-comment: #999999;
+  --highlight-attribute: #88aece;
+  --highlight-symbol: #c59bc1;
+  --highlight-namespace: #56b175;
+  --highlight-keyword: #b7b658;
+  --highlight-literal: #f08d49;
+  --highlight-punctuation: #cccccc;
+  --highlight-variable: #b086c2;
+  --highlight-deletion: #de7176;
+  --highlight-addition: #76c490;
+}
+
+/*** HLJS ***/
+
+/* Copyright (c) 2006, Ivan Sagalaev.
+ * https://github.com/highlightjs/highlight.js/blob/86dcb210227ef130a00b5ece50605ea1ec887be8/src/styles/default.css */
+pre code.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1em;
+}
+
+code.hljs {
+  padding: 3px 5px;
+}
+
+/* Copyright 2017-2020 Stack Exchange Inc.
+ * https://github.com/highlightjs/highlight.js/blob/86dcb210227ef130a00b5ece50605ea1ec887be8/src/styles/stackoverflow-light.css
+ * https://github.com/highlightjs/highlight.js/blob/86dcb210227ef130a00b5ece50605ea1ec887be8/src/styles/stackoverflow-dark.css */
+.hljs {
+  color: var(--highlight-color, #2f3337);
+  background: var(--highlight-bg, #f6f6f6);
+}
+
+.hljs-subst {
+  color: var(--highlight-color, #2f3337);
+}
+
+.hljs-comment {
+  color: var(--highlight-comment, #656e77);
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-meta .hljs-keyword,
+.hljs-doctag,
+.hljs-section {
+  color: var(--highlight-keyword, #015692);
+}
+
+.hljs-attr {
+  color: var(--highlight-attribute, #015692);
+}
+
+.hljs-attribute {
+  color: var(--highlight-symbol, #803378);
+}
+
+.hljs-name,
+.hljs-type,
+.hljs-number,
+.hljs-selector-id,
+.hljs-quote,
+.hljs-template-tag {
+  color: var(--highlight-namespace, #b75501);
+}
+
+.hljs-selector-class {
+  color: var(--highlight-keyword, #015692);
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-symbol,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-link,
+.hljs-selector-attr {
+  color: var(--highlight-variable, #54790d);
+}
+
+.hljs-meta,
+.hljs-selector-pseudo {
+  color: var(--highlight-keyword, #015692);
+}
+
+.hljs-built_in,
+.hljs-title,
+.hljs-literal {
+  color: var(--highlight-literal, #b75501);
+}
+
+.hljs-bullet,
+.hljs-code {
+  color: var(--highlight-punctuation, #535a60);
+}
+
+.hljs-meta .hljs-string {
+  color: var(--highlight-variable, #54790d);
+}
+
+.hljs-deletion {
+  color: var(--highlight-deletion, #c02d2e);
+}
+
+.hljs-addition {
+  color: var(--highlight-addition, #2f6f44);
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+

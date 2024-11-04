@@ -1,0 +1,116 @@
+/* this is the dark color stylesheet
+ * it should only contain colors.
+ */
+
+html[data-theme="dark"] html, html[data-theme="dark"] body { background-color: #423d3d !important; }
+html[data-theme="dark"] body, html[data-theme="dark"] body, html[data-theme="dark"] input { color: #eee; }
+html[data-theme="dark"] a { color: #8d7dff; }
+html[data-theme="dark"] a.logonav:hover { background-color: #6e4df5; color: #68ff53; }
+html[data-theme="dark"] a, html[data-theme="dark"] #logo { color: #8364ff; }
+html[data-theme="dark"] a#logo { color: grey; }
+html[data-theme="dark"] a:hover { color: #ccc; }
+html[data-theme="dark"] * { scrollbar-color: #404244 #1e1f20; }
+
+/* shows external links à la Wikipedia: */
+html[data-theme="dark"] a[href^="http"]:after {
+     content: " " url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAIpJREFUeNqEkIEJwCAMBGPpEs7hHK6hY+gauoZr6Bo6RtqEWkxb6EMQnuM/USEirIoxSmOKwDkhBEwp4VPkb4801Xun9xW4e+9FldYarLUvkBPPOp4JGWOgtSaSt6VWQKUU9nPOEiSIgAmNMdadFTjn7utqrXwh6fLvH9nXhamW5ksMnpfDnw4BBgBfunO056MmqAAAAABJRU5ErkJggg==);
+}
+
+html[data-theme="dark"] blockquote { 
+  border-left: 5px solid #ffffff12; 
+  transition: border-left-color 0.5s ease,
+              background-color 2s ease;
+}
+html[data-theme="dark"] blockquote:hover { 
+  border-left-color: rgba(255,255,255,20%); 
+  background-color: rgba(255,255,255,10%);
+}
+
+html[data-theme="dark"] #header_buttons a[href^="http"]:after {
+     content: none;
+}
+
+html[data-theme="dark"] input { 
+  background-color: #483d8b85; /* transp. darkslateblue */
+  border-color: #7788994f; /* transp. darkslategrey */
+  border-style: inset;
+  padding: 2px 5px;
+  border-width: 1px;
+  color: darkturquoise;
+}
+html[data-theme="dark"] input[type=button], html[data-theme="dark"] input[type=submit] { 
+  background-color: indianred;
+  background-color: coral;
+  color: white;
+  font-family: serif;
+  margin-top: .5em;
+  border-radius: 3px;
+  background-color: lightgrey;
+  padding: 0.25em .3em;
+  color: black;
+  cursor: pointer;
+}
+
+html[data-theme="dark"] div#header + div {
+  background-color: rgb(50, 48, 48);
+}
+
+html[data-theme="dark"] span#logo_path { color: slategrey; }
+
+html[data-theme="dark"] hr {
+  border-color: #ff00c245;
+  border-style: dashed;
+  border-width: 3px;
+  margin: 1.5em .5em;
+}
+
+html[data-theme="dark"] #root { 
+  border-color: #454545; 
+  /* box-shadow: rgb(76, 84, 92) 3px 3px 1px -2px */
+  border-radius: .5em;
+}
+html[data-theme="dark"] #header { background-color: #222; }
+
+html[data-theme="dark"] #realm_help .func_spec { background-color: #45454545; }
+html[data-theme="dark"] #realm_help .func_spec:nth-child(odd) { background: #4545459e; }
+html[data-theme="dark"] #realm_help .func_spec .shell_command { color: #b6b6b6; }
+html[data-theme="dark"] #realm_help .func_spec > table > tbody > tr > th { color: #eee; }
+
+html[data-theme="dark"] div#home table, html[data-theme="dark"] div#home th, html[data-theme="dark"] div#home td { 
+  border-color: rgba(255,255,255,12%); 
+}
+
+html[data-theme="dark"] strong, html[data-theme="dark"] b { 
+  color: gainsboro;
+}
+html[data-theme="dark"] h1, html[data-theme="dark"] h2, html[data-theme="dark"] h3, html[data-theme="dark"] h4, html[data-theme="dark"] h5, html[data-theme="dark"] h6 { 
+  /* those are nice but better work on this again in the night */
+  color: burlywood;
+  color: gold;
+  color: hotpink;
+  color: tomato;
+  color: lightslategray;
+  color: lightsalmon;
+  color: lightcoral;
+  color: rosybrown;
+  color: #8b85a5;
+  color: gainsboro;
+}
+
+/* ```<code>``` */
+html[data-theme="dark"] pre > code {
+  background-color: #252545;
+  color: #858ed7;
+  text-shadow: black 1px 1px;
+}
+
+html[data-theme="dark"] pre { background-color: #252545; }
+
+/* `word`: <code> tags inside <pre> that are not immediate children */
+html[data-theme="dark"] code:not(pre > code) {
+  /* border: 1px #ccc dashed; */ 
+  padding: 1px 0.382em;
+  color: #a87ab6;
+  background-color: #252545;
+  text-shadow: black 1px 1px;
+}

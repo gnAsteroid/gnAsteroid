@@ -1,6 +1,9 @@
-# gnAsteroid.style-gnosmos
+# clouds.theme
 
-Default style for [gnAsteroid](https://github.com/gnAsteroid/gnAsteroid).
+A theme for [gnAsteroid](https://github.com/gnAsteroid/gnAsteroid),
+experimenting with responsiveness and weird shadows looking like clouds
+on a blue background.
+
 
 # In progress
 

@@ -13,13 +13,13 @@ func TestParseArgs(t *testing.T) {
 		name       = "my asteroid"
 		exampleDir = "../example"
 		bind       = "57182"
-		styleDir   = "../default-style" // a fake style dir, it's not checked here
+		themeDir   = "foo" // a fake theme dir, it's not checked here
 	)
 	_, e := parseArgs([]string{
 		"-asteroid-dir", exampleDir,
 		"-asteroid-name", name,
 		"-bind", bind,
-		"-style-dir", styleDir,
+		"-theme-dir", themeDir,
 	}, slog.Default())
 	if e != nil {
 		t.Errorf("Could not parse args, %v", e)
@@ -28,7 +28,6 @@ func TestParseArgs(t *testing.T) {
 	// require.Equal(t, asteroidName, name)
 	require.Equal(t, asteroidDir, exampleDir)
 	require.Equal(t, bindAddr, bind)
-	require.Equal(t, styleDir, styleDir)
 }
 
 // an asteroid read from -asteroid-dir

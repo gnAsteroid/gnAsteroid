@@ -22,11 +22,11 @@ import (
 )
 
 var bindAddr string
-var styleDir string
+var themeDir string
 var asteroidDir string // asteroidDir will be read and become asteroidFs
 
 // Launch a gnAsteroid server (using gnoweb) on bindAddr
-// Watch asteroid, style dirs, SIGUSR1 for reload.
+// Watch asteroid, theme dirs, SIGUSR1 for reload.
 func main() {
 	zapLogger := log.NewZapConsoleLogger(os.Stdout, zapcore.DebugLevel)
 	logger := log.ZapLoggerToSlog(zapLogger)
@@ -37,11 +37,11 @@ func main() {
 		os.Exit(1)
 	}
 	logger.Info(fmt.Sprintf("Serving %s on http://%s", asteroidDir, bindAddr))
-	styleFs := StyleFsFrom(styleDir)
+	themeFs := ThemeFsFrom(themeDir)
 	server := &http.Server{
 		Addr:              bindAddr,
 		ReadHeaderTimeout: 60 * time.Second,
-		Handler:           gnAsteroid.MakeApp(logger, cfg, styleFs),
+		Handler:           gnAsteroid.MakeApp(logger, cfg, themeFs),
 	}
 
 	// SIGUSR1 -> invalidate all templates
@@ -53,7 +53,7 @@ func main() {
 			switch sig {
 			case syscall.SIGUSR1:
 				fmt.Println("received SIGUSR1.")
-				server.Handler = gnAsteroid.MakeApp(logger, cfg, styleFs)
+				server.Handler = gnAsteroid.MakeApp(logger, cfg, themeFs)
 			}
 		}
 	}()
@@ -67,14 +67,14 @@ func main() {
 				case event, ok := <-watcher.Events:
 					if ok {
 						logger.Info("Reloading, modified: " + event.Name)
-						server.Handler = gnAsteroid.MakeApp(logger, cfg, styleFs)
+						server.Handler = gnAsteroid.MakeApp(logger, cfg, themeFs)
 					}
 				}
 			}
 		}()
 		watcher.AddRecursive(asteroidDir)
-		if styleDir != "" {
-			watcher.AddRecursive(styleDir)
+		if themeDir != "" {
+			watcher.AddRecursive(themeDir)
 		}
 	}
 
@@ -91,7 +91,7 @@ func parseArgs(args []string, logger *slog.Logger) (gnoweb.Config, error) {
 	var asteroidName string
 	flag.StringVar(&asteroidDir, "asteroid-dir", "", "wiki directory location. [Mandatory!]")
 	flag.StringVar(&asteroidName, "asteroid-name", "CHANGEME", "the asteroid name (website title). read from .TITLE, or CHANGEME")
-	flag.StringVar(&styleDir, "style-dir", "", "style directory (css, js, img). Default is '', meaning \"use embed 'default-style/'\"")
+	flag.StringVar(&themeDir, "theme-dir", "", "theme directory (css, js, img). Default is 'themes/default.theme/'")
 	flag.StringVar(&bindAddr, "bind", "0.0.0.0:8888", "server listening address")
 	// gnoweb flags
 	flag.StringVar(&cfg.RemoteAddr, "remote", "https://rpc.gno.land:443", "remote gnoland node address")
@@ -108,8 +108,8 @@ func parseArgs(args []string, logger *slog.Logger) (gnoweb.Config, error) {
 		return cfg, errors.New("-asteroid-dir is mandatory")
 	} else if !osm.DirExists(asteroidDir) {
 		return cfg, errors.New(asteroidDir + " is not a directory")
-	} else if styleDir != "" && !osm.DirExists(styleDir) {
-		return cfg, errors.New(styleDir + " is not a directory. -style-dir must exist, if supplied.")
+	} else if themeDir != "" && !osm.DirExists(themeDir) {
+		return cfg, errors.New(themeDir + " is not a directory. -theme-dir must exist, if supplied.")
 	}
 	// if asteroidName has default value, check whether <asteroidDir>/.TITLE exists
 	if asteroidName == "CHANGEME" && osm.FileExists(asteroidDir+"/.TITLE") {
@@ -123,9 +123,9 @@ func parseArgs(args []string, logger *slog.Logger) (gnoweb.Config, error) {
 	return cfg, nil
 }
 
-func StyleFsFrom(styleDir string) fs.FS {
-	if styleDir == "" {
-		return gnAsteroid.DefaultStyle()
+func ThemeFsFrom(themeDir string) fs.FS {
+	if themeDir == "" {
+		return os.DirFS(gnAsteroid.DefaultTheme)
 	}
-	return os.DirFS(styleDir)
+	return os.DirFS(themeDir)
 }

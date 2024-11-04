@@ -4,7 +4,6 @@ go 1.22.3
 
 require (
 	github.com/dietsche/rfsnotify v0.0.0-20200716145600-b37be6e4177f
-	github.com/gnAsteroid/gnosmos.style v0.0.0-20240801075825-8e425cad0a84
 	github.com/gnolang/gno v0.1.0-nightly.20240523.0.20240531193303-edb321f85bef
 	github.com/gotuna/gotuna v0.6.0
 	github.com/stretchr/testify v1.9.0
@@ -14,7 +13,8 @@ require (
 )
 
 // replace github.com/gnolang/gno => /me/gno
-replace github.com/gnolang/gno => github.com/grepsuzette/gno v0.0.1
+// replace github.com/gnolang/gno => github.com/grepsuzette/gno v0.0.1
+replace github.com/gnolang/gno => /Users/bob/GNO/gno-gnoweb-more-generic
 
 require (
 	github.com/btcsuite/btcd/btcec/v2 v2.3.4 // indirect

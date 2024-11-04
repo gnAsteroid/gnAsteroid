@@ -6,14 +6,16 @@ import (
 	"io/fs"
 	"log/slog"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 
-	gnosmos "github.com/gnAsteroid/gnosmos.style"
 	"github.com/gnolang/gno/gno.land/pkg/gnoweb"
 	"github.com/gotuna/gotuna"
 	"github.com/yalue/merged_fs"
 )
+
+const DefaultTheme string = "themes/default.theme"
 
 // Asteroids gravitate around gno.land
 
@@ -21,9 +23,9 @@ import (
 // gnAsteroid uses gnoweb to serve markdown-based websites.
 // The features remain otherwise identical.
 //
-// Later down the road, gnAsteroid can probably also map to
+// Later gnAsteroid can probably also map to
 // realm-based wiki to have a local system of files that can
-// be saved to the blockchain.
+// optionaly be served or backed up/restored to the blockchain.
 
 var (
 	asteroidName string // read from cmdLine, or file called .TITLE at root, or "CHANGEME"
@@ -35,23 +37,20 @@ var newViews embed.FS // composed with gnoweb's, using merged_fs
 
 func SetAsteroidFs(asteroid fs.FS) { asteroidFs = asteroid }
 func SetAsteroidName(name string)  { asteroidName = name }
-func DefaultStyle() fs.FS {
-	return gnosmos.Style
-}
 
 // HandleAsteroid can be used to have a serverless gnoweb serving an asteroid as a handler.
 // This can be used for example on Vercel.
 // @param (asteroid) the fs to serve (normally a tree with some markdown documents)
-// @param (style) if nil, DefaultStyle() will be used
-func HandleAsteroid(asteroid, style fs.FS, asteroidName_ string, cfg gnoweb.Config) http.Handler {
+// @param (theme) if nil, os.DirFS(DefaultTheme) will be used
+func HandleAsteroid(asteroid, theme fs.FS, asteroidName_ string, cfg gnoweb.Config) http.Handler {
 	SetAsteroidFs(asteroid)
 	SetAsteroidName(asteroidName_)
-	return MakeApp(slog.Default(), cfg, style)
+	return MakeApp(slog.Default(), cfg, theme)
 }
 
 // MakeApp is separated from HandleAsteroid, mainly because
 // cmd/main uses MakeApp(), to reload watched files.
-func MakeApp(logger *slog.Logger, cfg gnoweb.Config, styleFs fs.FS) http.Handler {
+func MakeApp(logger *slog.Logger, cfg gnoweb.Config, themeFs fs.FS) http.Handler {
 	gnowebViews, e := fs.Sub(gnoweb.DefaultViewsFiles(), "views")
 	if e != nil {
 		panic("Could not find gnoweb views: " + e.Error())
@@ -60,13 +59,13 @@ func MakeApp(logger *slog.Logger, cfg gnoweb.Config, styleFs fs.FS) http.Handler
 	if e != nil {
 		panic("Could not find asteroid views: " + e.Error())
 	}
-	if styleFs == nil {
-		styleFs = gnosmos.Style
+	if themeFs == nil {
+		themeFs = os.DirFS(DefaultTheme)
 	}
 	return gnoweb.MakeAppWithOptions(logger, cfg, gnoweb.Options{
 		RootHandler:     HandleRootAsMdFile,
 		NotFoundHandler: HandleNotFoundAsFile,
-		StyleFS:         styleFs,
+		ThemeFS:         themeFs,
 		ViewFS:          merged_fs.NewMergedFS(asteroidViews, gnowebViews),
 	}).Router
 }

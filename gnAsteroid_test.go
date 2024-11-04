@@ -3,6 +3,7 @@ package gnAsteroid
 import (
 	"embed"
 	"io/fs"
+	"os"
 	"testing"
 
 	"github.com/gnolang/gno/gno.land/pkg/gnoweb"
@@ -15,7 +16,7 @@ func TestAsteroid(t *testing.T) {
 	neptuneFs, _ := fs.Sub(neptune, "example")
 
 	if nil == HandleAsteroid(
-		neptuneFs, DefaultStyle(), "neptune as an asteroid",
+		neptuneFs, os.DirFS(DefaultTheme), "neptune as an asteroid",
 		gnoweb.Config{
 			RemoteAddr:  "gno.land:26657",
 			HelpChainID: "portal-loop",
