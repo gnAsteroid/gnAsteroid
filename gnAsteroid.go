@@ -72,6 +72,7 @@ func MakeApp(logger *slog.Logger, cfg gnoweb.Config, themeFs fs.FS) http.Handler
 }
 
 // This RootHandler has gnoweb serve a file called "index.md" or "README.md" when root is requested
+// XXX at a glance it seems possible to use the logic from HandleNotFoundAsFile instead.
 func HandleRootAsMdFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.Handler {
 	var rootFile fs.File
 	var e error
@@ -89,14 +90,21 @@ func HandleRootAsMdFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config)
 	if e != nil {
 		panic(e.Error())
 	}
-	// homeContent := osm.MustReadFile(file)
-	homeContent := buf
+    // Filter out optional Front Matter
+    // extracting document Title, if absent Title is the url's path
+    // page title is asteroid name, unless defined in Front Matter
+    pureMarkdown, kv := ExtractFrontMatter(string(buf))
+    pageName := asteroidName 
+    if title, has := kv["title"]; has {
+        pageName = title
+    }
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		app.NewTemplatingEngine().
 			Set("AsteroidName", asteroidName).
-			Set("HomeContent", string(homeContent)).
+			Set("Content", string(pureMarkdown)).
+            Set("PageName", pageName). 
 			Set("Config", cfg).
-			Render(w, r, "asteroidHome.html", "funcs.html")
+			Render(w, r, "asteroid_markdown.html", "funcs.html")
 	})
 }
 
@@ -112,7 +120,7 @@ func HandleNotFoundAsFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Confi
 			app.NewTemplatingEngine().
 				Set("AsteroidName", asteroidName).
 				Set("Config", cfg).
-				Render(w, r, "asteroid403.html", "funcs.html")
+				Render(w, r, "asteroid_403.html", "funcs.html")
             return
 		}
 		var file fs.File // when nil, means still not found
@@ -158,10 +166,10 @@ func HandleNotFoundAsFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Confi
             }
 			app.NewTemplatingEngine().
 				Set("AsteroidName", asteroidName).
-				Set("MainContent", string(pureMarkdown)).
+				Set("Content", string(pureMarkdown)).
                 Set("PageName", pageName). 
 				Set("Config", cfg).
-				Render(w, r, "funcs.html", "asteroidGeneric.html")
+				Render(w, r, "funcs.html", "asteroid_markdown.html")
 		case strings.HasSuffix(servedFilename, ".jpg"),
 			strings.HasSuffix(servedFilename, ".jpeg"),
 			strings.HasSuffix(servedFilename, ".png"),

@@ -1,54 +1,37 @@
-The formatting is the same as gnoweb. The markup is certainly the same, 
-but the css style may have a couple improvements, such as for tables and blockquotes.
+---
+title: Markdown cheatsheet
+date: 2023-05-01
+description: Shows common markdown syntax and allow the user to see how it's rendered.
+tags: [Markdown]
+author: grepsuzette
+---
+The markdown is formatted by gnoweb, but styling may vary depending on the theme you use. An optional header in Front Matter is possible, if so the `title` will be used for page titles.
 
-# H1
-## H2
-### H3
+* Use `*α*` to *emphasize* something. 
+* Use `**α**` to put something in **bold**.
+* Use `~~α~~` for ~~strikethrough~~
+* Use HTML `<sub>2</sub>` for subscript, e.g. H<sub>2</sub>O
+* Use HTML `<sup>n</sup>` for superscript, e.g. x<sup>n</sup>
+* Use a syntax like `[Markdown Guide](https://www.markdownguide.org)` to create links like [Markdown Guide](https://www.markdownguide.org)
+* Use a target beginning by `/r/` to **render realms from gno.land**, e.g. `[gnoface](/r/demo/art/gnoface:42)` creating links to gno.land smart contracts like [gnoface](/r/demo/art/gnoface:42) (see also [on gno.land directly](https://gno.land/r/demo/art/gnoface:42))
 
-Titles produced by:
-```
-# H1
-## H2
-### H3
-```
 
-`**bold**` -> **bold**.
 
-`*italic*` buterin -> *italic* buterin.
+## Lists
 
-### Blockquote
-
-> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. - Nero
->> Alea jacta est - Iulius Caesar
->>> Really? - Nero
->>>> Roll d100 now - The DM
-
-How:
-
-```
-> a first quote,
-> it may be on several lines. - Somebody
->> a response
->>> another response and so on.
-```
-
-### Ordered List
-
-1. First item
-2. Second item
-3. Third item
-
-Use a number followed by a dot. If you use the same number it will be automatically incremented.
-
-### Unordered List
+Begin with a star `*` or a dash `-` followed by a space for regular lists:
 
 - First item
 - Second item
 - Third item
 
-Use a star `*` or a dash `-` followed by a space.
+Begin with a number followed by a dot for ordered lists. If you use the same number it will be automatically incremented.
 
-### Mixed lists
+1. First item
+2. Second item
+3. Third item
+
+Nest lists, creating mixed-style lists, by prepending two spaces:
 
 - First item
 - Second item
@@ -65,17 +48,45 @@ Use a star `*` or a dash `-` followed by a space.
     * stu
   * vwx
 
-You can nest lists by prepending two spaces.
+## Blockquote
 
-# 4 spaces
+```
+> a first quote,
+> it may be on several lines. - Somebody
+>> a response
+>>> another response and so on.
+```
 
-    What happens when you start a line or paragraph with 4 leading spaces.
 
-### Code
+> a first quote,
+> it may be on several lines. - Somebody
+>> a response
+>>> another response and so on.
 
-This is an inline `code` (backquoted).
+## Four spaces
 
-Multi-line (fenced with triple backquotes):
+    this text 
+    starts with four 
+    leading spaces.
+    it will be shown
+    verbatim
+
+this paragraph
+doesn't start with spaces.
+therefore it will be shown 
+normally.
+
+## Code
+
+These may still need some work (in CSS) with some themes.
+
+### Inline 
+
+This is code is inline (surrounded by backquotes): `let j ← 4`
+
+### Multi-line, fenced with triple backquotes
+
+We mean delimited by "```":
 
 ```
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut 
@@ -84,12 +95,14 @@ laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in repreh
 voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat 
 non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 ```
-Here is a longer sample (long line):
+
+### Same on one very long line
 
 ```
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 ```
-Fenced code block (triple backquotes followed by word "go"):
+
+### Fenced code block (triple backquotes followed by word "go"):
 ```go
 import "fmt"
 
@@ -97,20 +110,15 @@ func main() {
     fmt.Println("hello world")
 }
 ```
-### Horizontal Rule
+## Horizontal Rule
 
 Something like `---` on its own line:
 
 ---
 
-### Link
+Note that if such a line appear on the first line, it will introduce a Front Matter header.
 
-`[Markdown Guide](https://www.markdownguide.org)`:
-[Markdown Guide](https://www.markdownguide.org)
-
-You may also employ HTML `<a>` links.
-
-### Image
+## Image
 
 `![alt text](https://www.markdownguide.org/assets/images/tux.png)`:
 
@@ -118,7 +126,17 @@ You may also employ HTML `<a>` links.
 
 You may also use the HTML `<img>` tag.
 
-### Table
+## Table
+
+```
+| Syntax      | Description |
+| ----------- | ----------- |
+| Header      | Title       |
+| Paragraph   | Text        |
+```
+
+gives
+
 
 | Syntax | Description |
 | ----------- | ----------- |
@@ -126,7 +144,7 @@ You may also use the HTML `<img>` tag.
 | Paragraph | Text |
 
 
-### Footnote
+## Footnote
 
 Here's a sentence with a footnote. [^1]
 
@@ -134,21 +152,52 @@ Here's a sentence with a footnote. [^1]
 
 (Note: footnotes are not supported yet)
 
-### Strikethrough
+## Task List
 
-Use `~~foo~~`: ~~foo~~
-
-### Task List
+```
+- [x] Write the press release
+- [ ] Update the website
+- [ ] Contact the media
+```
 
 - [x] Write the press release
 - [ ] Update the website
 - [ ] Contact the media
 
-### Subscript
 
-Use HTML `<sub>2</sub>`: H<sub>2</sub>O
+# Front Matter example
 
-### Superscript
+Front Matter is a simple header format like this:
 
-Use HTML `<sup>n</sup>`: x<sup>n</sup>
+```
+---
+title: Markdown cheatsheet
+date: 2023-05-01
+description: Shows common markdown syntax and allow the user to see how it's rendered.
+tags: [Markdown]
+author: bob
+---
+```
+It is optional.
 
+There are 2 ways to define a title for a page.
+
+1. automatically: by default it will be read from the URL's path (removing the .md extension)
+2. by using a Front Matter header, e.g.:
+
+```
+---
+title: My awesome page title
+---
+```
+
+For the **home page**, the Asteroid name is used by default, unless overwritten as above.
+
+---
+
+# Title level 1
+## Title level 2
+### Title level 3
+#### Title level 4
+##### Title level 5
+###### Title level 6

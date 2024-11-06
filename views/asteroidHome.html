@@ -8,12 +8,17 @@
   <body onload="main()">
     <div id="root">
       <div id="header">
-        {{ template "header_logo" . }}
-        {{ template "header_buttons" . }}
+        {{ template "logo" . }}
+        {{ template "toggle_darkmode" . }}
       </div>
-
+      <div id="subheader">
+        {{ template "page_name" . }}
+        {{ template "back_button" . }}
+      </div>
       <div id="home">
-        <pre id="source">{{ .Data.HomeContent }}</pre>
+        <pre id="source">
+          {{ .Data.Content }}
+        </pre>
       </div>
       {{ template "footer" }}
     </div>

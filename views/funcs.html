@@ -1,4 +1,24 @@
-{{ define "header_buttons" }}
+{{- define "logo" -}}
+<!--<a id="logo" href="/">
+  <img
+    src="/static/img/logo.png"
+    alt="{{ .Data.AsteroidName }}"
+    title="{{ .Data.AsteroidName }}"
+    height="38"
+  />
+</a>-->
+  <a class="logonav" href="/">{{ .Data.AsteroidName }}</a>
+{{- end -}}
+
+{{- define "back_button" -}}
+  <a class="back_button" href="javascript:window.history.back()"></a>
+{{- end -}}
+
+{{- define "page_name" -}}
+  <h1 id="page_name">{{ .Data.PageName }}</h1>
+{{- end -}}
+
+{{ define "toggle_darkmode" }}
 <div id="header_buttons">
   <a href="https://github.com/gnAsteroid/gnAsteroid"
      ><img id="github32" alt="" /></a>
@@ -104,23 +124,6 @@
 </script>
 {{ end }}
 
-{{- define "header_logo" -}}
-<!--<a id="logo" href="/">
-  <img
-    src="/static/img/logo.png"
-    alt="{{ .Data.AsteroidName }}"
-    title="{{ .Data.AsteroidName }}"
-    height="38"
-  />
-</a>-->
-  <a class="logonav" href="/">{{ .Data.AsteroidName }}</a>
-{{- end -}}
-
-{{- define "header_logo_with_back" -}}
-<a class="logonav" href="javascript:window.history.back()">&nbsp;&lt;&nbsp;</a>&nbsp;
-<a class="logonav" href="/">{{ .Data.AsteroidName }}</a>
-{{- end -}}
-
 {{- define "footer" -}}
 {{- end -}}
 
@@ -159,7 +162,7 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "logo" -}}
+{{- define "gno_logo" -}}
 <a class="logo" href="/">
   <svg class="logo_img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 238">
     <path d="M136.02,160.26c-1.77-6.5-5.55-12.22-10.68-16.59-1.98-1.69-4.14-3.29-6.5-4.78-2-1.27-4.52.6-3.94,2.9l1.42,5.62c1.8,7.14-5.86,12.93-12.24,9.26l-17.15-9.86c-11.27-6.48-25.13-6.48-36.4,0l-17.15,9.86c-6.38,3.67-14.04-2.13-12.24-9.26l1.46-5.78c.58-2.29-1.93-4.16-3.93-2.9-2.62,1.64-5,3.42-7.16,5.29-5.05,4.38-8.56,10.26-10.2,16.74l-.06.24c-4.17,16.56,2.31,33.97,16.29,43.78l43.3,30.37c4.74,3.32,11.05,3.32,15.79,0l43.3-30.37c14.19-9.95,20.65-27.74,16.09-44.51Z" class="logo-beard" />

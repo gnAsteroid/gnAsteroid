@@ -2,18 +2,22 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>{{ .Data.AsteroidName }} {{ .Data.Title }}</title>
+    <title>{{ .Data.AsteroidName }} {{ .Data.UrlPath }}</title>
     {{ template "html_head" }}
   </head>
   <body onload="main()">
     <div id="root">
       <div id="header">
-        {{ template "header_logo_with_back" . }}
-        {{ template "header_buttons" }}
+        {{ template "logo" . }}
+        {{ template "toggle_darkmode" }}
+      </div>
+      <div id="subheader">
+        {{ template "page_name" . }}
+        {{ template "back_button" . }}
       </div>
       <div id="home">
         <pre id="source">
-          {{- .Data.MainContent -}}
+          {{- .Data.Content -}}
         </pre>
       </div>
       {{ template "footer" }}

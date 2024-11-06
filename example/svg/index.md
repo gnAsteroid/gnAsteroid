@@ -1,4 +1,11 @@
-okay, let's list some awesome icons by Agata in the Space Icons Set:
+okay, let's list some awesome icons by Agata in the Space Icons Set, included in this asteroid.
+
+They can be used like this:
+
+`
+![alien-ship-2](svg/colored-outlined/alien-ship-2.svg)
+`
+or simply by using an `<img>`.
 
 ![Millennium-Falcon](svg/colored-outlined/Millennium-Falcon.svg)
 ![alien-1](svg/colored-outlined/alien-1.svg)

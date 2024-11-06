@@ -1,4 +1,10 @@
-Welcome to gnAsteroid.
+---
+title: gnAsteroid manual
+date: somewhere in 2024 AD
+description: A brief description.
+tags: [tag1, tag2]
+author: Your Name
+---
 
 Asteroids are simple websites or personal wikis that can interact with the Realms on [gno.land](https://gno.land) blockchain. 
 

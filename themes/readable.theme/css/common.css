@@ -1,0 +1,80 @@
+/* 
+ * The top area is separated in 2 vertical divs:
+ *
+ * - #header: with the logo/Blog name and toggle darkmode.
+ * - #subheader: with the Page title, and optionaly a back button.
+ */
+#header {
+  position: relative;
+  margin-top: 1em;
+  height: 4em;
+  border-bottom-width: 1.5px;
+  border-bottom-style: solid;
+}
+
+#header a.logonav {
+  position: absolute; top: 0; left: 0;
+  font-size: 2.5rem; 
+  text-decoration: none;
+}
+
+#header #header_buttons {
+  margin-top: 0.6em;
+  position: absolute; top: 0; right: 0;
+}
+
+#header #header_buttons a {
+  text-decoration: none;
+}
+
+#header #header_buttons #theme-toggle::before {
+  content: "Toggle dark/light";
+  font-size: 1em;
+}
+#header #header_buttons #theme-toggle:hover::before {
+  text-decoration: underline;
+}
+
+#header #header_buttons #theme-toggle > svg {
+  display: none;
+}
+
+
+/* ---------- subheader ---------*/
+
+#subheader {
+  /*display: flex;*/
+  /*flex-direction: column;*/
+    /*grid-template-columns: 200px 200px 200px;*/
+}
+
+#subheader a.back_button::before { 
+  content: "<"; 
+}
+#subheader a.back_button {
+  display: inline-block;
+  display: none;
+  width: 1em;
+  appearance: button; 
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 5px;
+  line-height: 1.2em;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+#subheader a.back_button:hover {
+  text-decoration: underline;
+}
+
+#subheader #page_name {
+  /*float: left;*/
+  /*margin-right: 0.25em;*/
+  /*margin-top: 0.5em;*/
+  /*font-size: 1.2em;*/
+  /*font-weight: 600;*/
+}
+
