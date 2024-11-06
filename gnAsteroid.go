@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/gnolang/gno/gno.land/pkg/gnoweb"
@@ -112,6 +113,7 @@ func HandleNotFoundAsFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Confi
 				Set("AsteroidName", asteroidName).
 				Set("Config", cfg).
 				Render(w, r, "asteroid403.html", "funcs.html")
+            return
 		}
 		var file fs.File // when nil, means still not found
 		servedFilename := ""
@@ -147,9 +149,17 @@ func HandleNotFoundAsFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Confi
 				http.Error(w, "can not read file: error", http.StatusExpectationFailed)
 				return
 			}
+            // Filter out optional Front Matter
+            // extracting document Title, if absent Title is the url's path
+            pureMarkdown, kv := ExtractFrontMatter(string(content))
+            pageName := strings.TrimSuffix(url, ".md") // e.g. "subdir/deep/blue" (without .md)
+            if title, has := kv["title"]; has {
+                pageName = title
+            }
 			app.NewTemplatingEngine().
 				Set("AsteroidName", asteroidName).
-				Set("MainContent", string(content)).
+				Set("MainContent", string(pureMarkdown)).
+                Set("PageName", pageName). 
 				Set("Config", cfg).
 				Render(w, r, "funcs.html", "asteroidGeneric.html")
 		case strings.HasSuffix(servedFilename, ".jpg"),
@@ -163,3 +173,53 @@ func HandleNotFoundAsFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Confi
 		}
 	})
 }
+
+// given a `content` supposedly in markdown,
+// return `pureMarkdown` which is the same as `content` without a Front Matter
+// header.
+//
+// Key-values will be stored to a map[string]string, the keys are lower-cased.
+//
+// Here are two examples of Front Matter:
+//
+// ---
+// title: Document Title
+// date: YYYY-MM-DD
+// description: A brief description.
+// tags: [tag1, tag2]
+// author: Your Name
+// ---
+// And the rest is markdown.
+//
+//
+// ---title: this is a one line front matter---
+// And the rest is markdown.
+//
+//
+func ExtractFrontMatter(content string) (pureMarkdown string, kv map[string]string) {
+	kv = make(map[string]string)
+    reOneLine := regexp.MustCompile(`^---([^:\s]+)\s*:\s*(.*)---\s*$`)
+    if m := reOneLine.FindStringSubmatch(content[:strings.IndexByte(content, '\n')]); m != nil {
+        kv[strings.ToLower(m[1])] = m[2]
+        pureMarkdown = content[strings.IndexByte(content, '\n')+1:]
+    } else if !strings.HasPrefix(content, "---\n") {
+        // Front Matter
+        pureMarkdown = content
+    } else {
+        inFrontMatter := true
+        reKv := regexp.MustCompile(`^(\w+):\s*(.*)$`)
+        for _, line := range strings.Split(content, "\n")[1:] {
+            if inFrontMatter {
+                if line == "---" {
+                    inFrontMatter = false
+                } else if m := reKv.FindStringSubmatch(line); m != nil {
+                    kv[strings.ToLower(m[1])] = m[2]
+                }
+            } else {
+                pureMarkdown += line + "\n"
+            }
+        }
+    }
+    return 
+}
+
