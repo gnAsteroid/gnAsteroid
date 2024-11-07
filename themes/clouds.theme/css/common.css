@@ -39,6 +39,7 @@ body {
   transition: 0.25s all ease;
   line-height: 1.54em;
 	font-family: Charter, 'Bitstream Charter', 'Sitka Text', Cambria, serif; font-weight: normal;
+	font-family: Verdana, Helvetica, sans-serif;
 }
 
 ul, ol { padding-left: 1.618em; }
@@ -48,7 +49,7 @@ pre { margin: 0; }
 pre > code {
   display: block;
   padding: 1em;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.618em;
   white-space: pre-wrap;
   overflow-wrap: break-word;
@@ -119,12 +120,38 @@ div#realm_render {
   padding: 1em;
 }
 
+/* adjust margins at the very top of #home */
+div#home > p:first-of-type { margin-top: 0; }
+div#home > h1:first-of-type,
+div#home > h2:first-of-type,
+div#home > h3:first-of-type,
+div#home > h4:first-of-type,
+div#home > h5:first-of-type,
+div#home > h6:first-of-type {
+  margin-top: 5px;
+}
+
+h1, h2, h3, h4, h5, h6 { margin-top: 5px; margin-bottom: 10px; }
+ul { margin-top: 5px; margin-bottom: 15px; }
+
+span.tag {
+  border: lightsalmon 1px solid;
+  border-radius: 5px;
+  background-color: salmon;
+  padding: 3px;
+  font-size: 12px;
+  line-height: 12px;
+  color: gold;
+  box-shadow: 1px 1px rgba(0,0,0,.2);
+}
 
 div#home table { 
   border-collapse: collapse; 
   box-shadow: #00000020 1px 1px 5px;
   border-radius: 5px;
   width: 100%;
+  margin-bottom: 15px;
+  font-size: 0.94rem;
 }
 div#home table, th, td { 
   border: 1px solid #00000070; 
@@ -141,8 +168,11 @@ a { text-decoration: none; }
   margin-left: auto;
 }
 
+a.back_button::before { 
+  content: "<"; 
+}
 
-#logo, .logonav {
+#logo, .logonav, .back_button {
   position: relative;
   font-size: 1.5em;
   line-height: 1.5em;
@@ -150,7 +180,7 @@ a { text-decoration: none; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
+a.logonav:hover, a.back_button:hover { border-radius: 1.5px; }
 
 #logo_path { 
   position: relative; 
@@ -160,7 +190,6 @@ a { text-decoration: none; }
 }
 #logo_path a:hover { text-decoration: underline; }
 
-a.logonav:hover { border-radius: 1.5px; }
 
 #realm_links { position: relative; padding-left: 0.25em; }
 #realm_links a:hover { text-decoration: underline; }

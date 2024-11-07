@@ -8,8 +8,8 @@ html[data-theme="light"] html, html[data-theme="light"] body {
   /* background-color: #4f5c65; */
 }
 html[data-theme="light"] html, html[data-theme="light"] body, html[data-theme="light"] input { color: #000; }
-html[data-theme="light"] a.logonav { color: #b8b8b8; }
-html[data-theme="light"] a.logonav:hover { background-color: #0093ff70; color: #f19c9c; }
+html[data-theme="light"] a.logonav html[data-theme="light"], a.back_button { color: #b8b8b8; }
+html[data-theme="light"] a.logonav:hover, html[data-theme="light"] a.back_button:hover { background-color: #0093ff70; color: #f19c9c; }
 html[data-theme="light"] a, html[data-theme="light"] #logo { 
   color: #0d7cce;
 }
@@ -36,7 +36,7 @@ html[data-theme="light"] #header_buttons a[href^="http"]:after {
 
 html[data-theme="light"] input { background-color: #eee; border-color: #ccc; }
 html[data-theme="light"] div#header + div {
-  background-color: rgb(234, 234, 234);
+  background-color: white;
 }
 
 html[data-theme="light"] hr {
@@ -85,7 +85,8 @@ html[data-theme="light"] pre > code {
 
 /* `word`: <code> tags inside <pre> that are not immediate children */
 html[data-theme="light"] code:not(pre > code) {
-  border: 1px #ccc dashed; 
-  padding: 1px 0.382em;
-  background-color: #ddd;
+  padding: 1px 5px 1px 3px;
+  border-radius: 3px;
+  font-size: 0.9rem;
+  background-color: #eee;
 }

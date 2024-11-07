@@ -12,7 +12,7 @@ html[data-theme="light"] {
   --highlight-keyword: #88aece;
   --highlight-variable: #b7ac96;
   --highlight-keyword: #37bca3;
-  --highlight-literal: #f08d49;
+  --highlight-literal: #958d87;
   --highlight-punctuation: #cccccc;
   --highlight-variable: #bb7b62;
   --highlight-variable: #bd8e63;
@@ -113,7 +113,7 @@ code.hljs {
 .hljs-built_in,
 .hljs-title,
 .hljs-literal {
-  color: var(--highlight-literal, #b75501);
+  color: var(--highlight-literal, #958d87);
 }
 
 .hljs-bullet,
