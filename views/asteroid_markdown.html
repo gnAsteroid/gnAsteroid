@@ -13,6 +13,9 @@
         {{ template "toggle_darkmode" . }}
         {{ template "page_name" . }}
       </div>
+      <h1 class="post_header_page_name">
+        {{ template "page_name" . }}
+      </h1>
       <div id="home">
         <pre id="source">
           {{- .Data.Content -}}
