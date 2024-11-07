@@ -12,12 +12,14 @@
 
 {{- define "back_button" -}}
     {{ if ne .Data.AtHome "1" }}
-  <a class="back_button" href="javascript:window.history.back()"></a>&nbsp;
+    <a class="back_button" href="javascript:window.history.back()"></a>
     {{ end }}
 {{- end -}}
 
 {{- define "page_name" -}}
-  <h1 id="page_name">{{ .Data.PageName }}</h1>
+    {{ if ne .Data.AtHome "1" }}
+    <span class="separator"></span><span class="page_name">{{ .Data.PageName }}</span>
+    {{ end }}
 {{- end -}}
 
 {{ define "toggle_darkmode" }}

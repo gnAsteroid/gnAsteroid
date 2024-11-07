@@ -94,6 +94,17 @@ html body img#github32:hover {
   max-width: 920px;
 }
 
+/*
+ * header uses flex, can have 4 elements horizontally:
+ * 1. a.back_button
+ * 2. a.logonav
+ * 3. span.separator
+ * 4. a.page_name
+ * 5. #header_buttons
+ *
+ * The header_buttons on this theme is on the right,
+ * all others are shown in succession on the left.
+ */
 #header {
   padding: 22px;
   display: flex;
@@ -105,12 +116,42 @@ html body img#github32:hover {
   margin-bottom: 0;
   height: 38px;
 }
+#header a.back_button { order:1; padding-right: 0.3em; padding-left: 0em; }
+#header a.back_button::before { content: "<"; }
+#header a.logonav { order: 2; }
+#header span.separator { order: 3; }
+#header span.separator::before { content: "/"; font-size: 22px; color: gray; padding-left: 5px; padding-right: 5px; }
+#header .page_name { order: 4; color: gray; }
+#header #header_buttons { order: 5; }
 
-div#header + div {
+#header + div {
   margin-top: 0px;
   border-bottom-left-radius: 0.5em;
   border-bottom-right-radius: 0.5em;
 }
+
+#header #logo, 
+#header .logonav, 
+#header .back_button,
+#header .page_name{
+  position: relative;
+  font-size: 1.5em;
+  line-height: 1.5em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#header a.logonav:hover, #header a.back_button:hover { border-radius: 1.5px; }
+
+#header #header_buttons {
+  float: right;
+  position: relative;
+  padding-left: 22px;
+  padding-top: .5em;
+  margin-left: auto;
+}
+
+
 
 /* div#package_file, */
 div#home,
@@ -159,28 +200,6 @@ div#home table, th, td {
 }
 
 a { text-decoration: none; }
-
-#header_buttons {
-  float: right;
-  position: relative;
-  padding-left: 22px;
-  padding-top: .5em;
-  margin-left: auto;
-}
-
-a.back_button::before { 
-  content: "<"; 
-}
-
-#logo, .logonav, .back_button {
-  position: relative;
-  font-size: 1.5em;
-  line-height: 1.5em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-a.logonav:hover, a.back_button:hover { border-radius: 1.5px; }
 
 #logo_path { 
   position: relative; 

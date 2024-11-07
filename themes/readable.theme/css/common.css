@@ -5,12 +5,14 @@
  * - #subheader: with the Page title, and optionaly a back button.
  */
 #header {
-  position: relative;
+  display: relative;
   margin-top: 1em;
   height: 4em;
   border-bottom-width: 1.5px;
   border-bottom-style: solid;
 }
+
+.logonav, .page_name
 
 #header a.logonav {
   position: absolute; top: 0; left: 0;
