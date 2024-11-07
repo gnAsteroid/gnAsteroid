@@ -93,17 +93,14 @@ func HandleRootAsMdFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config)
     // Filter out optional Front Matter
     // extracting document Title, if absent Title is the url's path
     // page title is asteroid name, unless defined in Front Matter
-    pureMarkdown, kv := ExtractFrontMatter(string(buf))
+    pureMarkdown, _ := ExtractFrontMatter(string(buf))
     pageName := asteroidName 
-    if title, has := kv["title"]; has {
-        pageName = title
-    }
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		app.NewTemplatingEngine().
 			Set("AsteroidName", asteroidName).
-			Set("Content", string(pureMarkdown)).
-            Set("PageName", pageName). 
             Set("AtHome", "1"). // to e.g. disable back_button
+            Set("PageName", pageName). 
+			Set("Content", string(pureMarkdown)).
 			Set("Config", cfg).
 			Render(w, r, "asteroid_markdown.html", "funcs.html")
 	})
@@ -167,9 +164,9 @@ func HandleNotFoundAsFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Confi
             }
 			app.NewTemplatingEngine().
 				Set("AsteroidName", asteroidName).
-				Set("Content", string(pureMarkdown)).
-                Set("PageName", pageName). 
                 Set("AtHome", "0"). // to e.g. allow back_button
+                Set("PageName", pageName). 
+				Set("Content", string(pureMarkdown)).
 				Set("Config", cfg).
 				Render(w, r, "funcs.html", "asteroid_markdown.html")
 		case strings.HasSuffix(servedFilename, ".jpg"),

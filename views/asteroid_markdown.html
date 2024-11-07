@@ -5,7 +5,11 @@
     <title>{{ .Data.AsteroidName }} {{ .Data.UrlPath }}</title>
     {{ template "html_head" }}
   </head>
+  {{- if eq .Data.AtHome "1" -}} 
+  <body onload="main()" class="atHome">
+  {{- else -}}
   <body onload="main()">
+  {{- end -}}
     <div id="root">
       <div id="header">
         {{ template "back_button" . }}
