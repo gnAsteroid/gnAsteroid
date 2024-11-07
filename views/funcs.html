@@ -11,7 +11,9 @@
 {{- end -}}
 
 {{- define "back_button" -}}
-  <a class="back_button" href="javascript:window.history.back()"></a>
+    {{ if ne .Data.AtHome "1" }}
+  <a class="back_button" href="javascript:window.history.back()"></a>&nbsp;
+    {{ end }}
 {{- end -}}
 
 {{- define "page_name" -}}

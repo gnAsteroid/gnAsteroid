@@ -8,12 +8,12 @@
   <body onload="main()">
     <div id="root">
       <div id="header">
+        {{ template "back_button" . }}
         {{ template "logo" . }}
         {{ template "toggle_darkmode" }}
       </div>
       <div id="subheader">
         {{ template "page_name" . }}
-        {{ template "back_button" . }}
       </div>
       <div id="home">
         <pre id="source">

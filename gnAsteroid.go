@@ -103,6 +103,7 @@ func HandleRootAsMdFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config)
 			Set("AsteroidName", asteroidName).
 			Set("Content", string(pureMarkdown)).
             Set("PageName", pageName). 
+            Set("AtHome", "1"). // to e.g. disable back_button
 			Set("Config", cfg).
 			Render(w, r, "asteroid_markdown.html", "funcs.html")
 	})
@@ -168,6 +169,7 @@ func HandleNotFoundAsFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Confi
 				Set("AsteroidName", asteroidName).
 				Set("Content", string(pureMarkdown)).
                 Set("PageName", pageName). 
+                Set("AtHome", "0"). // to e.g. allow back_button
 				Set("Config", cfg).
 				Render(w, r, "funcs.html", "asteroid_markdown.html")
 		case strings.HasSuffix(servedFilename, ".jpg"),
