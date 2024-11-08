@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gnolang/gno/gno.land/pkg/gnoweb"
+	"github.com/gnAsteroid/gno/gno.land/pkg/gnoweb"
     "github.com/stretchr/testify/assert"
 )
 

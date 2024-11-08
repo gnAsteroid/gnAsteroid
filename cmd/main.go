@@ -15,9 +15,9 @@ import (
 
 	"github.com/dietsche/rfsnotify"
 	"github.com/gnAsteroid/gnAsteroid"
-	"github.com/gnolang/gno/gno.land/pkg/gnoweb"
-	"github.com/gnolang/gno/gno.land/pkg/log"
-	osm "github.com/gnolang/gno/tm2/pkg/os"
+	"github.com/gnAsteroid/gno/gno.land/pkg/gnoweb"
+	"github.com/gnAsteroid/gno/gno.land/pkg/log"
+	osm "github.com/gnAsteroid/gno/tm2/pkg/os"
 	"go.uber.org/zap/zapcore"
 )
 
