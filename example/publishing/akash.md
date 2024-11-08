@@ -2,7 +2,7 @@
 
 **Akash** is a decentralized cloud platform similar to Vercel or AWS built on Cosmos. Prototypes of asteroids have already been deployed on Akash in the past. It requires understanding Akash, and Dockerfile though.
 
-The example can be found at https://github.com/gnAsteroid/gnAsteroid.docker.
+The example can be found at https://github.com/gnAsteroid/gnAsteroid.akash
 
 *PROS*:
 

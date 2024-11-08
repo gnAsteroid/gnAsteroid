@@ -112,7 +112,7 @@ This is a work in progress, but [here's what works](publishing/) for now.
 
 More links may arrive soon, e.g.:
 
-* [gnAsteroid.docker](https://github.com/gnAsteroid/gnAsteroid.docker): a Dockerfile to help serve asteroids (especially on [Akash](https://console.akash.network))
+* [gnAsteroid.akash](https://github.com/gnAsteroid/gnAsteroid.akash): a Dockerfile to help serve asteroids (especially on [Akash](https://console.akash.network))
 
 ## Credits
 
