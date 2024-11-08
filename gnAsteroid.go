@@ -11,7 +11,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/gnolang/gno/gno.land/pkg/gnoweb"
+	"github.com/gnAsteroid/gno/gno.land/pkg/gnoweb"
 	"github.com/gotuna/gotuna"
 	"github.com/yalue/merged_fs"
 )

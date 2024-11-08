@@ -4,7 +4,7 @@ go 1.22.3
 
 require (
 	github.com/dietsche/rfsnotify v0.0.0-20200716145600-b37be6e4177f
-	github.com/gnolang/gno v0.2.0
+	github.com/gnAsteroid/gno v0.0.0-20241108042821-d47e65ad73be
 	github.com/gotuna/gotuna v0.6.0
 	github.com/stretchr/testify v1.9.0
 	github.com/yalue/merged_fs v1.3.0
@@ -18,7 +18,7 @@ require (
 	github.com/cockroachdb/apd/v3 v3.2.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0 // indirect
-	github.com/gnAsteroid/gno v0.0.0-20241108042821-d47e65ad73be // indirect
+	github.com/gnolang/gno v0.2.0 // indirect
 	github.com/gnolang/overflow v0.0.0-20170615021017-4d914c927216 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
