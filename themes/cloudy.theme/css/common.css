@@ -124,7 +124,7 @@ html body img#github32:hover {
 #header .page_name { order: 4; color: gray; }
 #header #header_buttons { order: 5; }
 
-#header + div {
+#home {
   margin-top: 0px;
   border-bottom-left-radius: 0.5em;
   border-bottom-right-radius: 0.5em;
@@ -150,6 +150,8 @@ html body img#github32:hover {
   padding-top: .5em;
   margin-left: auto;
 }
+
+h1.post_header_page_name { display: none; }
 
 /* div#package_file, */
 div#home,

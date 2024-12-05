@@ -1,15 +1,20 @@
 /* this is the dark color stylesheet
  * it should only contain colors.
+ * These colors are (c) grepsuzette
  */
 
-html[data-theme="dark"] html, html[data-theme="dark"] body { background-color: #423d3d !important; }
-html[data-theme="dark"] body, html[data-theme="dark"] body, html[data-theme="dark"] input { color: #eee; }
+html[data-theme="dark"] html, html[data-theme="dark"] body { background-color: #5b0843 !important; }
+html[data-theme="dark"] body, html[data-theme="dark"] body, html[data-theme="dark"] input { color: #8b9fce; }
 html[data-theme="dark"] a { color: #8d7dff; }
-html[data-theme="dark"] a.logonav:hover, html[data-theme="dark"] a.back_button:hover{ background-color: #6e4df5; color: #68ff53; }
+html[data-theme="dark"] a.logonav:hover, html[data-theme="dark"] a.back_button:hover{ background-color: #6e4df5; color: #ffa5a5; }
 html[data-theme="dark"] a, html[data-theme="dark"] #logo { color: #8364ff; }
 html[data-theme="dark"] a#logo { color: grey; }
 html[data-theme="dark"] a:hover { color: #ccc; }
 html[data-theme="dark"] * { scrollbar-color: #404244 #1e1f20; }
+
+html[data-theme="dark"] #header .page_name { color: #4b57b9; }
+html[data-theme="dark"] span.spoiler { background-color: #4b57b9; color: #4b57b9; }
+html[data-theme="dark"] span.spoiler:hover { color: white; }
 
 /* shows external links à la Wikipedia: */
 html[data-theme="dark"] a[href^="http"]:after {
@@ -51,8 +56,8 @@ html[data-theme="dark"] input[type=button], html[data-theme="dark"] input[type=s
   cursor: pointer;
 }
 
-html[data-theme="dark"] div#header + div {
-  background-color: rgb(50, 48, 48);
+html[data-theme="dark"] div#home {
+  background-color: rgb(48, 42, 125);
 }
 
 html[data-theme="dark"] span#logo_path { color: slategrey; }
@@ -69,7 +74,7 @@ html[data-theme="dark"] #root {
   /* box-shadow: rgb(76, 84, 92) 3px 3px 1px -2px */
   border-radius: .5em;
 }
-html[data-theme="dark"] #header { background-color: #222; }
+html[data-theme="dark"] #header { background-color: #041546; }
 
 html[data-theme="dark"] #realm_help .func_spec { background-color: #45454545; }
 html[data-theme="dark"] #realm_help .func_spec:nth-child(odd) { background: #4545459e; }

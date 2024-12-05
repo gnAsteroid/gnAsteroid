@@ -35,7 +35,7 @@ html[data-theme="light"] #header_buttons a[href^="http"]:after {
 }
 
 html[data-theme="light"] input { background-color: #eee; border-color: #ccc; }
-html[data-theme="light"] div#header + div {
+html[data-theme="light"] div#home {
   background-color: white;
 }
 

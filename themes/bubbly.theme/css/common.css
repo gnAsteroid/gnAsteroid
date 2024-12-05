@@ -43,6 +43,21 @@ body {
 	font-family: Charter, 'Bitstream Charter', 'Sitka Text', Cambria, serif; font-weight: normal;
 }
 
+#home table {
+  border-collapse: collapse;
+}
+
+#home table thead :is(td, th) {
+  background-color: black;
+  font-weight: bold;
+  color: white;
+  padding: 1px 5px;
+}
+
+#home table td, #home table th {
+  border: 0.5px solid black;
+  padding: 0px 5px;
+}
 
 blockquote blockquote {
   margin: 0;
