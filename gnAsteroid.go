@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/gnAsteroid/gno/gno.land/pkg/gnoweb"
 	"github.com/gotuna/gotuna"
@@ -76,30 +77,40 @@ func MakeApp(logger *slog.Logger, cfg gnoweb.Config, themeFs fs.FS) http.Handler
 func HandleRootAsMdFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.Handler {
 	var rootFile fs.File
 	var e error
-	rootFile, e = asteroidFs.Open("index.md")
-	if e != nil {
-		rootFile, e = asteroidFs.Open("README.md")
+	// this can get called again when served files change on disk
+	// some editors like vim can take a long time to actually save and make a file
+	// available, hence we wait a bit (e.g. 0, 20ms, 100ms), to ultimately fail if nec.
+	found := false
+	for _, ms := range []time.Duration{20, 100} {
+		rootFile, e = asteroidFs.Open("index.md")
+		if e != nil {
+			rootFile, e = asteroidFs.Open("README.md")
+		}
+		if e == nil {
+			found = true
+			break
+		}
+		time.Sleep(ms * time.Millisecond)
 	}
-	if e != nil {
+	if !found {
 		panic("asteroid must include /(index|README).md")
 	}
 	fileInfo, _ := rootFile.Stat()
 	buf := make([]byte, fileInfo.Size())
-
 	_, e = rootFile.Read(buf)
 	if e != nil {
 		panic(e.Error())
 	}
-    // Filter out optional Front Matter
-    // extracting document Title, if absent Title is the url's path
-    // page title is asteroid name, unless defined in Front Matter
-    pureMarkdown, _ := ExtractFrontMatter(string(buf))
-    pageName := asteroidName 
+	// Filter out optional Front Matter
+	// extracting document Title, if absent Title is the url's path
+	// page title is asteroid name, unless defined in Front Matter
+	pureMarkdown, _ := ExtractFrontMatter(string(buf))
+	pageName := asteroidName
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		app.NewTemplatingEngine().
 			Set("AsteroidName", asteroidName).
-            Set("AtHome", "1"). // to e.g. disable back_button
-            Set("PageName", pageName). 
+			Set("AtHome", "1"). // to e.g. disable back_button
+			Set("PageName", pageName).
 			Set("Content", string(pureMarkdown)).
 			Set("Config", cfg).
 			Render(w, r, "asteroid_markdown.html", "funcs.html")
@@ -119,7 +130,7 @@ func HandleNotFoundAsFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Confi
 				Set("AsteroidName", asteroidName).
 				Set("Config", cfg).
 				Render(w, r, "asteroid_403.html", "funcs.html")
-            return
+			return
 		}
 		var file fs.File // when nil, means still not found
 		servedFilename := ""
@@ -155,17 +166,17 @@ func HandleNotFoundAsFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Confi
 				http.Error(w, "can not read file: error", http.StatusExpectationFailed)
 				return
 			}
-            // Filter out optional Front Matter
-            // extracting document Title, if absent Title is the url's path
-            pureMarkdown, kv := ExtractFrontMatter(string(content))
-            pageName := strings.TrimSuffix(url, ".md") // e.g. "subdir/deep/blue" (without .md)
-            if title, has := kv["title"]; has {
-                pageName = title
-            }
+			// Filter out optional Front Matter
+			// extracting document Title, if absent Title is the url's path
+			pureMarkdown, kv := ExtractFrontMatter(string(content))
+			pageName := strings.TrimSuffix(url, ".md") // e.g. "subdir/deep/blue" (without .md)
+			if title, has := kv["title"]; has {
+				pageName = title
+			}
 			app.NewTemplatingEngine().
 				Set("AsteroidName", asteroidName).
-                Set("AtHome", "0"). // to e.g. allow back_button
-                Set("PageName", pageName). 
+				Set("AtHome", "0"). // to e.g. allow back_button
+				Set("PageName", pageName).
 				Set("Content", string(pureMarkdown)).
 				Set("Config", cfg).
 				Render(w, r, "funcs.html", "asteroid_markdown.html")
@@ -173,7 +184,8 @@ func HandleNotFoundAsFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Confi
 			strings.HasSuffix(servedFilename, ".jpeg"),
 			strings.HasSuffix(servedFilename, ".png"),
 			strings.HasSuffix(servedFilename, ".gif"),
-			strings.HasSuffix(servedFilename, ".svg"):
+			strings.HasSuffix(servedFilename, ".svg"),
+			strings.HasSuffix(servedFilename, ".webp"):
 			http.ServeFileFS(w, r, asteroidFs, servedFilename)
 		default:
 			http.Error(w, "Unrecognized extension", http.StatusExpectationFailed)
@@ -198,35 +210,31 @@ func HandleNotFoundAsFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Confi
 // ---
 // And the rest is markdown.
 //
-//
 // ---title: this is a one line front matter---
 // And the rest is markdown.
-//
-//
 func ExtractFrontMatter(content string) (pureMarkdown string, kv map[string]string) {
 	kv = make(map[string]string)
-    reOneLine := regexp.MustCompile(`^---([^:\s]+)\s*:\s*(.*)---\s*$`)
-    if m := reOneLine.FindStringSubmatch(content[:strings.IndexByte(content, '\n')]); m != nil {
-        kv[strings.ToLower(m[1])] = m[2]
-        pureMarkdown = content[strings.IndexByte(content, '\n')+1:]
-    } else if !strings.HasPrefix(content, "---\n") {
-        // Front Matter
-        pureMarkdown = content
-    } else {
-        inFrontMatter := true
-        reKv := regexp.MustCompile(`^(\w+):\s*(.*)$`)
-        for _, line := range strings.Split(content, "\n")[1:] {
-            if inFrontMatter {
-                if line == "---" {
-                    inFrontMatter = false
-                } else if m := reKv.FindStringSubmatch(line); m != nil {
-                    kv[strings.ToLower(m[1])] = m[2]
-                }
-            } else {
-                pureMarkdown += line + "\n"
-            }
-        }
-    }
-    return 
+	reOneLine := regexp.MustCompile(`^---([^:\s]+)\s*:\s*(.*)---\s*$`)
+	if m := reOneLine.FindStringSubmatch(content[:strings.IndexByte(content, '\n')]); m != nil {
+		kv[strings.ToLower(m[1])] = m[2]
+		pureMarkdown = content[strings.IndexByte(content, '\n')+1:]
+	} else if !strings.HasPrefix(content, "---\n") {
+		// Front Matter
+		pureMarkdown = content
+	} else {
+		inFrontMatter := true
+		reKv := regexp.MustCompile(`^(\w+):\s*(.*)$`)
+		for _, line := range strings.Split(content, "\n")[1:] {
+			if inFrontMatter {
+				if line == "---" {
+					inFrontMatter = false
+				} else if m := reKv.FindStringSubmatch(line); m != nil {
+					kv[strings.ToLower(m[1])] = m[2]
+				}
+			} else {
+				pureMarkdown += line + "\n"
+			}
+		}
+	}
+	return
 }
-
