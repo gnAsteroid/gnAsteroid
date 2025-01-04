@@ -1,4 +1,5 @@
 package gnAsteroid
+
 import (
 	"embed"
 	"io/fs"
@@ -6,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/gnAsteroid/gno/gno.land/pkg/gnoweb"
-    "github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 //go:embed example
@@ -30,23 +31,33 @@ func TestAsteroid(t *testing.T) {
 }
 
 func TestExtractFrontMatter(t *testing.T) {
-    {
-        example := `---
+	{
+		md, kv := ExtractFrontMatter("foo")
+		assert.Equal(t, kv["title"], "")
+		assert.Equal(t, md, "foo")
+	}
+	{
+		md, kv := ExtractFrontMatter("")
+		assert.Equal(t, kv["title"], "")
+		assert.Equal(t, md, "")
+	}
+	{
+		example := `---
 title: Qwerty Uiop!@#$%^&*()
 tags: [great, many, many, tags]
 date: 2028932312341234237417234192374
 ---
 Ola,
 amigo`
-        md, kv := ExtractFrontMatter(example) 
-        assert.Equal(t, kv["title"], "Qwerty Uiop!@#$%^&*()")
-        assert.Equal(t, kv["tags"], "[great, many, many, tags]")
-        assert.Equal(t, kv["date"], "2028932312341234237417234192374")
-        assert.Equal(t, md, "Ola,\namigo\n")
-    }
-    {
-        md, kv := ExtractFrontMatter("---title: What Is The Matrix---\nActual article") 
-        assert.Equal(t, kv["title"], "What Is The Matrix")
-        assert.Equal(t, md, "Actual article")
-    }
+		md, kv := ExtractFrontMatter(example)
+		assert.Equal(t, kv["title"], "Qwerty Uiop!@#$%^&*()")
+		assert.Equal(t, kv["tags"], "[great, many, many, tags]")
+		assert.Equal(t, kv["date"], "2028932312341234237417234192374")
+		assert.Equal(t, md, "Ola,\namigo\n")
+	}
+	{
+		md, kv := ExtractFrontMatter("---title: What Is The Matrix---\nActual article")
+		assert.Equal(t, kv["title"], "What Is The Matrix")
+		assert.Equal(t, md, "Actual article")
+	}
 }

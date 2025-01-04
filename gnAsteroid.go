@@ -215,13 +215,16 @@ func HandleNotFoundAsFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Confi
 func ExtractFrontMatter(content string) (pureMarkdown string, kv map[string]string) {
 	kv = make(map[string]string)
 	reOneLine := regexp.MustCompile(`^---([^:\s]+)\s*:\s*(.*)---\s*$`)
-	if m := reOneLine.FindStringSubmatch(content[:strings.IndexByte(content, '\n')]); m != nil {
+	i := strings.IndexByte(content, '\n')
+	if i == -1 {
+		pureMarkdown = content
+	} else if m := reOneLine.FindStringSubmatch(content[:i]); m != nil {
 		kv[strings.ToLower(m[1])] = m[2]
-		pureMarkdown = content[strings.IndexByte(content, '\n')+1:]
+		pureMarkdown = content[i+1:]
 	} else if !strings.HasPrefix(content, "---\n") {
-		// Front Matter
 		pureMarkdown = content
 	} else {
+		// Front Matter
 		inFrontMatter := true
 		reKv := regexp.MustCompile(`^(\w+):\s*(.*)$`)
 		for _, line := range strings.Split(content, "\n")[1:] {
