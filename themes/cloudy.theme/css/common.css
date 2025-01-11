@@ -49,7 +49,7 @@ pre { margin: 0; }
 pre > code {
   display: block;
   padding: 1em;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.618em;
   white-space: pre-wrap;
   overflow-wrap: break-word;
