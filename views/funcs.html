@@ -67,13 +67,13 @@
 
 {{ define "html_head" }}
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="stylesheet" href="./static/css/normalize.css" />
-<link rel="stylesheet" href="./static/css/common.css" />
-<link rel="stylesheet" href="./static/css/hljs.css" />
-<link rel="apple-touch-icon" sizes="180x180" href="./static/img/apple-touch-icon.png" />
-<link rel="mask-icon" href="./static/img/asteroid.svg" />
-<link rel="icon" type="image/svg+xml" href="./static/img/asteroid.svg" />
-<link rel="icon"  type="image/x-icon" href="./static/img/favicon.ico" />
+<link rel="stylesheet" href="/static/css/normalize.css" />
+<link rel="stylesheet" href="/static/css/common.css" />
+<link rel="stylesheet" href="/static/css/hljs.css" />
+<link rel="apple-touch-icon" sizes="180x180" href="/static/img/apple-touch-icon.png" />
+<link rel="mask-icon" href="/static/img/asteroid.svg" />
+<link rel="icon" type="image/svg+xml" href="/static/img/asteroid.svg" />
+<link rel="icon"  type="image/x-icon" href="/static/img/favicon.ico" />
 <noscript>
   <style type="text/css">
     #source {
@@ -126,11 +126,11 @@
 {{- end -}}
 
 {{- define "js" -}}
-<script type="text/javascript" src="./static/js/highlight.min.js"></script>
-<script type="text/javascript" src="./static/js/marked.min.js"></script>
-<script type="text/javascript" src="./static/js/umbrella.min.js"></script>
-<script type="text/javascript" src="./static/js/purify.min.js"></script>
-<script type="text/javascript" src="./static/js/renderer.js"></script>
+<script type="text/javascript" src="/static/js/highlight.min.js"></script>
+<script type="text/javascript" src="/static/js/marked.min.js"></script>
+<script type="text/javascript" src="/static/js/umbrella.min.js"></script>
+<script type="text/javascript" src="/static/js/purify.min.js"></script>
+<script type="text/javascript" src="/static/js/renderer.js"></script>
 <script type="text/javascript">
   function main() {
     const parsed = parseContent(document.getElementById("source").innerHTML);
