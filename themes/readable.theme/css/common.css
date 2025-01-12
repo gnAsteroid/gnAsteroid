@@ -37,3 +37,6 @@
  * and shows the h1.post_header_page_name instead (but not on the home page) */
 #header .page_name { display: none; }
 body.atHome h1.post_header_page_name { display: none; }
+
+html[data-theme=light] div#home a[href] { background-color: chartreuse; }
+html[data-theme=dark] div#home a[href] { background-color: #4b341f; color: #14ff00 }
