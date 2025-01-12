@@ -17,7 +17,7 @@ import (
 	"github.com/yalue/merged_fs"
 )
 
-const DefaultTheme string = "themes/default.theme"
+const DefaultTheme string = "themes/cloudy.theme"
 
 // Asteroids gravitate around gno.land
 
