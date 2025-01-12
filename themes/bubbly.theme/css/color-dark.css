@@ -45,7 +45,10 @@ html[data-theme="dark"] input[type=button], html[data-theme="dark"] input[type=s
 html[data-theme="dark"] blockquote { background-color: #404040; }
 html[data-theme="dark"] blockquote blockquote { background-color: #555555; }
 
-html[data-theme="dark"] div#home {
+html[data-theme="dark"] div#home,
+html[data-theme="dark"] div#packge_dir,
+html[data-theme="dark"] div#realm_help,
+html[data-theme="dark"] div#realm_render { 
   background-color: rgb(50, 48, 48);
   /* XXX remove hackish */
   margin-top: -0.1em;

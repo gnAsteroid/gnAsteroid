@@ -2,17 +2,16 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>{{ .Data.AsteroidName }}</title>
+    <title>{{ .Data.AsteroidName }} Content of {{ .Data.DirPath }}</title>
     {{ template "html_head" }}
   </head>
   <body onload="main()">
     <div id="root">
       <div id="header">
-        {{ template "header_logo_with_back" }}
-        <span id="logo_path">
-          <a href="{{ .Data.DirPath }}">Content of {{ .Data.DirPath }}</a>
-        </span>
-        {{ template "header_buttons" }}
+        {{ template "back_button" . }}
+        {{ template "logo" . }}
+        {{ template "header_buttons" . }}
+        <span class="page_name">Content of {{ .Data.DirPath }}</span>
       </div>
 
       <div id="packge_dir">

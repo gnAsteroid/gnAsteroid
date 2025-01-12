@@ -56,7 +56,10 @@ html[data-theme="dark"] input[type=button], html[data-theme="dark"] input[type=s
   cursor: pointer;
 }
 
-html[data-theme="dark"] div#home {
+html[data-theme="dark"] div#home,
+html[data-theme="dark"] div#packge_dir,
+html[data-theme="dark"] div#realm_help,
+html[data-theme="dark"] div#realm_render { 
   background-color: rgb(48, 42, 125);
 }
 

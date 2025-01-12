@@ -9,11 +9,14 @@
       <div id="root">
         <div id="data" data-realm-path="{{ .Data.RealmPath }}" data-remote="{{ .Data.Remote }}" data-chainid="{{ .Data.ChainID }}" />
         <div id="header">
-          {{ template "header_logo_with_back" }}
+        {{ template "back_button" . }}
+        {{ template "logo" . }}
+        {{ template "header_buttons" . }}
+        <span class="separator"></span>
           <span id="logo_path">
             <a href="{{ .Data.DirPath }}">{{ .Data.DirPath }}</a>?help
           </span>
-          {{ template "header_buttons" }}
+        </span>
         </div>
 
         <div id="realm_help">

@@ -25,7 +25,10 @@ html[data-theme="light"] input { background-color: #eee; border-color: #ccc; }
 html[data-theme="light"] blockquote { background-color: #ddd; }
 html[data-theme="light"] blockquote blockquote { background-color: #aaa4; }
 
-html[data-theme="light"] div#home {
+html[data-theme="light"] div#home ,
+html[data-theme="light"] div#packge_dir,
+html[data-theme="light"] div#realm_help,
+html[data-theme="light"] div#realm_render { 
   background-color: rgb(234, 234, 234);
   /* XXX remove hackish */
   margin-top: -0.1em;

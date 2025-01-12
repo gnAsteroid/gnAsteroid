@@ -8,11 +8,10 @@
     <body onload="main()">
       <div id="root">
         <div id="header">
-          {{ template "header_logo_with_back" }}
-          <span id="logo_path">
-            <a href="{{ .Data.DirPath }}/">{{ .Data.DirPath }}/</a>{{ .Data.FileName }}
-          </span>
-          {{ template "header_buttons" }}
+        {{ template "back_button" . }}
+        {{ template "logo" . }}
+        {{ template "header_buttons" . }}
+        <span class="page_name"><a href="{{ .Data.DirPath }}/">{{ .Data.DirPath }}/</a>{{ .Data.FileName }}</span>
         </div>
 
         <div id="package_file">

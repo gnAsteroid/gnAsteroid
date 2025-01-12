@@ -1,13 +1,9 @@
 {{- define "logo" -}}
-<!--<a id="logo" href="/">
-  <img
-    src="/static/img/logo.png"
-    alt="{{ .Data.AsteroidName }}"
-    title="{{ .Data.AsteroidName }}"
-    height="38"
-  />
-</a>-->
+  {{- if ne .Data.AsteroidName nil -}}
   <a class="logonav" href="/">{{ .Data.AsteroidName }}</a>
+  {{- else -}}
+  <a class="logonav" href="/">Home</a>
+  {{- end -}}
 {{- end -}}
 
 {{- define "back_button" -}}

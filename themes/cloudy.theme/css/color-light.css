@@ -35,7 +35,10 @@ html[data-theme="light"] #header_buttons a[href^="http"]:after {
 }
 
 html[data-theme="light"] input { background-color: #eee; border-color: #ccc; }
-html[data-theme="light"] div#home {
+html[data-theme="light"] div#home,
+html[data-theme="light"] div#packge_dir,
+html[data-theme="light"] div#realm_help,
+html[data-theme="light"] div#realm_render { 
   background-color: white;
 }
 
