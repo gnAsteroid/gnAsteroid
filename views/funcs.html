@@ -13,7 +13,9 @@
 {{- end -}}
 
 {{- define "page_name" -}}
+    {{ if ne .Data.AtHome "1" }}
     <span class="separator"></span><span class="page_name">{{ .Data.PageName }}</span>
+    {{ end }}
 {{- end -}}
 
 {{ define "header_buttons" }}
