@@ -43,6 +43,13 @@ body {
 	font-family: Charter, 'Bitstream Charter', 'Sitka Text', Cambria, serif; font-weight: normal;
 }
 
+h1 { font-size: 2em; line-height: 42px; }
+h2 { font-size: 1.618em; line-height: 36px; }
+h3 { font-size: 1.50em; line-height: 36px; }
+h4 { font-size: 1.33em; line-height: 34px; }
+h5 { font-size: 1.25em; line-height: 32px; }
+h6 { font-size: 1.10em; line-height: 30px; }
+
 #home table {
   border-collapse: collapse;
 }

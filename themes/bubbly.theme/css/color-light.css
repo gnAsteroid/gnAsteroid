@@ -43,6 +43,15 @@ html[data-theme="light"] hr {
   margin: 1.5em .5em;
 }
 
+html[data-theme="light"] h1,
+html[data-theme="light"] h2,
+html[data-theme="light"] h3,
+html[data-theme="light"] h4,
+html[data-theme="light"] h5,
+html[data-theme="light"] h6 { 
+  color: #444; 
+}
+
 html[data-theme="light"] #root { 
   border-color: #d7d9db; 
   /* box-shadow: rgba(43, 46, 50,55%) 1px 1px 0px 0px; */
