@@ -15,9 +15,9 @@ import (
 
 	"github.com/dietsche/rfsnotify"
 	"github.com/gnAsteroid/gnAsteroid"
-	"github.com/gnAsteroid/gno/gno.land/pkg/gnoweb"
-	"github.com/gnAsteroid/gno/gno.land/pkg/log"
-	osm "github.com/gnAsteroid/gno/tm2/pkg/os"
+	"github.com/gnolang/gno/gno.land/pkg/gnoweb"
+	"github.com/gnolang/gno/gno.land/pkg/log"
+	osm "github.com/gnolang/gno/tm2/pkg/os"
 	"go.uber.org/zap/zapcore"
 )
 
@@ -84,8 +84,9 @@ func main() {
 	zapLogger.Sync()
 }
 
-func parseArgs(args []string, logger *slog.Logger) (gnoweb.Config, error) {
-	cfg := gnoweb.NewDefaultConfig()
+func parseArgs(args []string, logger *slog.Logger) (*gnoweb.AppConfig, error) {
+	cfg := gnoweb.NewDefaultAppConfig()
+	cfg.UnsafeHTML = true
 	flag := flag.NewFlagSet("gnoweb", flag.ContinueOnError)
 	// gnAsteroid flags
 	var asteroidName string
@@ -94,12 +95,11 @@ func parseArgs(args []string, logger *slog.Logger) (gnoweb.Config, error) {
 	flag.StringVar(&themeDir, "theme-dir", "", "theme directory (css, js, img). Default is 'themes/default.theme/'")
 	flag.StringVar(&bindAddr, "bind", "0.0.0.0:8888", "server listening address")
 	// gnoweb flags
-	flag.StringVar(&cfg.RemoteAddr, "remote", "https://rpc.gno.land:443", "remote gnoland node address")
-	flag.StringVar(&cfg.CaptchaSite, "captcha-site", "", "recaptcha site key (if empty, captcha are disabled)")
+	flag.StringVar(&cfg.NodeRemote, "remote", "https://rpc.gno.land:443", "remote gnoland node address")
 	flag.StringVar(&cfg.FaucetURL, "faucet-url", "http://localhost:5050", "faucet server URL")
-	flag.StringVar(&cfg.HelpChainID, "help-chainid", "dev", "help page's chainid")
-	flag.StringVar(&cfg.HelpRemote, "help-remote", "https://gno.land:443", "help page's remote addr")
-	flag.BoolVar(&cfg.WithAnalytics, "with-analytics", cfg.WithAnalytics, "enable privacy-first analytics")
+	flag.StringVar(&cfg.ChainID, "chainid", "dev", "help page's chainid")
+	flag.StringVar(&cfg.RemoteHelp, "help-remote", "https://gno.land:443", "help page's remote addr")
+	flag.BoolVar(&cfg.Analytics, "with-analytics", cfg.Analytics, "enable privacy-first analytics")
 	// let's parse cli
 	if parseError := flag.Parse(args); parseError != nil {
 		return cfg, parseError

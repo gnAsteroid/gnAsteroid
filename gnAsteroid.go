@@ -2,6 +2,8 @@ package gnAsteroid
 
 import (
 	"embed"
+	"errors"
+	"fmt"
 	"html"
 	"io/fs"
 	"log/slog"
@@ -12,9 +14,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gnAsteroid/gno/gno.land/pkg/gnoweb"
+	"github.com/gnolang/gno/gno.land/pkg/gnoweb"
 	"github.com/gotuna/gotuna"
-	"github.com/yalue/merged_fs"
 )
 
 const DefaultTheme string = "themes/cloudy.theme"
@@ -31,7 +32,7 @@ const DefaultTheme string = "themes/cloudy.theme"
 
 var (
 	asteroidName string // read from cmdLine, or file called .TITLE at root, or "CHANGEME"
-	asteroidFs   fs.FS  // used by HandleRootAsMdFile and HandleNotFoundAsFile. This is the main difference with gno.land
+	asteroidFs   fs.FS  // used by HandleAsteroid. This is the main difference with gno.land's cmd/gnoweb.
 )
 
 //go:embed views/*.html
@@ -44,16 +45,16 @@ func SetAsteroidName(name string)  { asteroidName = name }
 // This can be used for example on Vercel.
 // @param (asteroid) the fs to serve (normally a tree with some markdown documents)
 // @param (theme) if nil, os.DirFS(DefaultTheme) will be used
-func HandleAsteroid(asteroid, theme fs.FS, asteroidName_ string, cfg gnoweb.Config) http.Handler {
+func HandleAsteroid(asteroid, theme fs.FS, asteroidName_ string, cfg *gnoweb.AppConfig) http.Handler {
 	SetAsteroidFs(asteroid)
 	SetAsteroidName(asteroidName_)
 	return MakeApp(slog.Default(), cfg, theme)
 }
 
-// MakeApp is separated from HandleAsteroid, mainly because
+// MakeApp is separate from HandleAsteroid, mainly because
 // cmd/main uses MakeApp(), to reload watched files.
-func MakeApp(logger *slog.Logger, cfg gnoweb.Config, themeFs fs.FS) http.Handler {
-	gnowebViews, e := fs.Sub(gnoweb.DefaultViewsFiles(), "views")
+func MakeApp(logger *slog.Logger, cfg *gnoweb.AppConfig, themeFs fs.FS) http.Handler {
+	gnowebViews, e := fs.Sub(nil /*gnoweb.DefaultViewsFiles() */, "views")
 	if e != nil {
 		panic("Could not find gnoweb views: " + e.Error())
 	}
@@ -64,17 +65,34 @@ func MakeApp(logger *slog.Logger, cfg gnoweb.Config, themeFs fs.FS) http.Handler
 	if themeFs == nil {
 		themeFs = os.DirFS(DefaultTheme)
 	}
-	return gnoweb.MakeAppWithOptions(logger, cfg, gnoweb.Options{
-		RootHandler:     HandleRootAsMdFile,
-		NotFoundHandler: HandleNotFoundAsFile,
-		ThemeFS:         themeFs,
-		ViewFS:          merged_fs.NewMergedFS(asteroidViews, gnowebViews),
-	}).Router
+	cfg.RootHandler = HandleAsteroid
+	if router, e := gnoweb.NewRouter(logger, cfg); e != nil { //, gnoweb.Options{
+		// 	RootHandler:     HandleRootAsMdFile,
+		// 	NotFoundHandler: HandleNotFoundAsFile,
+		// 	ThemeFS:         themeFs,
+		// 	ViewFS:          merged_fs.NewMergedFS(asteroidViews, gnowebViews),
+		panic(e.Error())
+	} else {
+		fmt.Printf("%v", gnowebViews, asteroidViews, themeFs)
+		return router
+	}
+}
+
+// This Handler replaces the gnoweb handler for "/".
+// It will:
+// - serve a file called "index.md" or "README.md" when root is actually requested.
+// - attempt to serve markdown or images in an asteroid.
+//
+// Bon comment faire sa.
+// handleRootAsMdFile and HandleNotFoundAsFile
+func HandleAsteroid(logger *slog.Logger, cfg *gnoweb.AppConfig) http.Handler {
+	// mais compren pas sans app, comment on conntraitra l'URL utilisee etc.
+	return nil
 }
 
 // This RootHandler has gnoweb serve a file called "index.md" or "README.md" when root is requested
-// XXX at a glance it seems possible to use the logic from HandleNotFoundAsFile instead.
-func HandleRootAsMdFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.Handler {
+// XXX at a glance it seems possible to use the logic from handleNotFoundAsFile instead.
+func handleRootAsMdFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.AppConfig) (http.Handler, error) {
 	var rootFile fs.File
 	var e error
 	// this can get called again when served files change on disk
@@ -93,13 +111,13 @@ func HandleRootAsMdFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config)
 		time.Sleep(ms * time.Millisecond)
 	}
 	if !found {
-		panic("asteroid must include /(index|README).md")
+		return nil, errors.New("asteroid must include /(index|README).md")
 	}
 	fileInfo, _ := rootFile.Stat()
 	buf := make([]byte, fileInfo.Size())
 	_, e = rootFile.Read(buf)
 	if e != nil {
-		panic(e.Error())
+		return nil, e
 	}
 	// Filter out optional Front Matter
 	// extracting document Title, if absent Title is the url's path
@@ -114,11 +132,11 @@ func HandleRootAsMdFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config)
 			Set("Content", string(pureMarkdown)).
 			Set("Config", cfg).
 			Render(w, r, "asteroid_markdown.html", "funcs.html")
-	})
+	}), nil
 }
 
-// HandleNotFoundAsFile is a fallthrough handler to attempt serving markdown or images
-func HandleNotFoundAsFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.Config) http.Handler {
+// handleNotFoundAsFile is a fallthrough handler to attempt serving markdown or images
+func handleNotFoundAsFile(logger *slog.Logger, app gotuna.App, cfg *gnoweb.AppConfig) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		url := r.URL.String()
 		url = html.UnescapeString(url)
