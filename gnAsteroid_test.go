@@ -6,7 +6,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gnolang/gno/gno.land/pkg/gnoweb"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,7 +17,7 @@ func TestAsteroid(t *testing.T) {
 
 	if nil == HandleAsteroid(
 		neptuneFs, os.DirFS(DefaultTheme), "neptune as an asteroid",
-		gnoweb.Config{
+		&Config{
 			RemoteAddr:  "gno.land:26657",
 			HelpChainID: "portal-loop",
 			HelpRemote:  "gno.land:26657",

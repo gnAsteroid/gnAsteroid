@@ -13,7 +13,7 @@ func TestParseArgs(t *testing.T) {
 		name       = "my asteroid"
 		exampleDir = "../example"
 		bind       = "57182"
-		themeDir   = "foo" // a fake theme dir, it's not checked here
+		themeDir   = "../themes/raw.theme"
 	)
 	_, e := parseArgs([]string{
 		"-asteroid-dir", exampleDir,

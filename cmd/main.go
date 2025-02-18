@@ -15,7 +15,6 @@ import (
 
 	"github.com/dietsche/rfsnotify"
 	"github.com/gnAsteroid/gnAsteroid"
-	"github.com/gnolang/gno/gno.land/pkg/gnoweb"
 	"github.com/gnolang/gno/gno.land/pkg/log"
 	osm "github.com/gnolang/gno/tm2/pkg/os"
 	"go.uber.org/zap/zapcore"
@@ -28,7 +27,8 @@ var asteroidDir string // asteroidDir will be read and become asteroidFs
 // Launch a gnAsteroid server (using gnoweb) on bindAddr
 // Watch asteroid, theme dirs, SIGUSR1 for reload.
 func main() {
-	zapLogger := log.NewZapConsoleLogger(os.Stdout, zapcore.DebugLevel)
+	zapLogger := log.NewZapConsoleLogger(os.Stdout, zapcore.InfoLevel)
+	defer zapLogger.Sync()
 	logger := log.ZapLoggerToSlog(zapLogger)
 
 	cfg, e := parseArgs(os.Args[1:], logger)
@@ -84,9 +84,8 @@ func main() {
 	zapLogger.Sync()
 }
 
-func parseArgs(args []string, logger *slog.Logger) (*gnoweb.AppConfig, error) {
-	cfg := gnoweb.NewDefaultAppConfig()
-	cfg.UnsafeHTML = true
+func parseArgs(args []string, logger *slog.Logger) (*gnAsteroid.Config, error) {
+	cfg := gnAsteroid.NewDefaultConfig()
 	flag := flag.NewFlagSet("gnoweb", flag.ContinueOnError)
 	// gnAsteroid flags
 	var asteroidName string
@@ -95,11 +94,10 @@ func parseArgs(args []string, logger *slog.Logger) (*gnoweb.AppConfig, error) {
 	flag.StringVar(&themeDir, "theme-dir", "", "theme directory (css, js, img). Default is 'themes/default.theme/'")
 	flag.StringVar(&bindAddr, "bind", "0.0.0.0:8888", "server listening address")
 	// gnoweb flags
-	flag.StringVar(&cfg.NodeRemote, "remote", "https://rpc.gno.land:443", "remote gnoland node address")
-	flag.StringVar(&cfg.FaucetURL, "faucet-url", "http://localhost:5050", "faucet server URL")
-	flag.StringVar(&cfg.ChainID, "chainid", "dev", "help page's chainid")
-	flag.StringVar(&cfg.RemoteHelp, "help-remote", "https://gno.land:443", "help page's remote addr")
-	flag.BoolVar(&cfg.Analytics, "with-analytics", cfg.Analytics, "enable privacy-first analytics")
+	flag.StringVar(&cfg.RemoteAddr, "remote", "https://rpc.gno.land:443", "remote gnoland node address")
+	flag.StringVar(&cfg.HelpChainID, "chainid", "dev", "help page's chainid")
+	flag.StringVar(&cfg.HelpRemote, "help-remote", "https://gno.land:443", "help page's remote addr")
+	flag.BoolVar(&cfg.WithAnalytics, "with-analytics", false, "enable privacy-first analytics")
 	// let's parse cli
 	if parseError := flag.Parse(args); parseError != nil {
 		return cfg, parseError

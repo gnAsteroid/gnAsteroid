@@ -99,15 +99,6 @@ Publishing your asteroid means to share it with other people.
 
 This is a work in progress, but [here's what works](publishing/) for now.
 
-## TODO
-
-- [ ] realm to register, link and share asteroids (belts?)
-- [ ] publishing
-- [x] better `<table>` styling
-- [ ] typography of the `<h1>-<h5>` titles (serif, sans?)
-- [ ] converge gnoweb's views so this can remove ./views/
-- [ ] ?help view for realms must use the value specified w/ -help-remote (and if not, -chainid must use -help-chainid)
-
 ## More 
 
 More links may arrive soon, e.g.:
